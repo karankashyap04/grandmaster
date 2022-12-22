@@ -1,6 +1,6 @@
 import PieceType from "../piece_types/pieceTypes";
 
-enum MessageType {
+export enum MessageType {
   MOVE_PIECE = "MOVE_PIECE",
   CHECKMATE_LOST = "CHECKMATE_LOST",
   CHECKMATE_WON = "CHECKMATE_WON",
@@ -9,9 +9,9 @@ enum MessageType {
   // TIME_LOST and TIME_WON as well.
 }
 
-interface Position {
+export interface Position {
   row: number;
-  column: number;
+  col: number;
 }
 
 export interface MovePieceMessage {
