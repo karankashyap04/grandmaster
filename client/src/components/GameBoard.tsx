@@ -24,15 +24,20 @@ export default function GameBoard({ myColor }: { myColor: Color }) {
   return <div>Placeholder text for the GameBoard component!</div>;
 }
 
-
 // HELPER FUNCTIONS:
-export function isOccupiedWithMine(square: Position, gameState: GameState): boolean {
+export function isOccupiedWithMine(
+  square: Position,
+  gameState: GameState
+): boolean {
   const row: number = square.row;
   const col: number = square.col;
   return gameState.myPieces.pieces[row][col] !== PieceType.EMPTY_SQUARE;
 }
 
-export function isOccupiedWithOther(square: Position, gameState: GameState): boolean {
+export function isOccupiedWithOther(
+  square: Position,
+  gameState: GameState
+): boolean {
   const row: number = square.row;
   const col: number = square.col;
   return gameState.otherPieces.pieces[row][col] !== PieceType.EMPTY_SQUARE;
@@ -56,7 +61,11 @@ function isMoveValid(
 
   const initialPosition: Position = moveMessage.data.initialPosition;
   const finalPosition: Position = moveMessage.data.finalPosition;
-  const possibleMoves: Position[] = getPossibleMoves(pieceType, initialPosition, gameState);
+  const possibleMoves: Position[] = getPossibleMoves(
+    pieceType,
+    initialPosition,
+    gameState
+  );
   return possibleMoves.includes(finalPosition);
 }
 

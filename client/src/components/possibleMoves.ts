@@ -1,6 +1,10 @@
 import { Position } from "../message/message";
 import PieceType from "../piece_types/pieceTypes";
-import { GameState, isOccupiedWithMine, isOccupiedWithOther } from "./GameBoard";
+import {
+  GameState,
+  isOccupiedWithMine,
+  isOccupiedWithOther,
+} from "./GameBoard";
 
 function getOtherPosition(square: Position): Position {
   const otherPosition: Position = {
