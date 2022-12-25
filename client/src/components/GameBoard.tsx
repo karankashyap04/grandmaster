@@ -1,6 +1,7 @@
 import React from "react";
 import { MovePieceMessage, Position } from "../message/message";
 import PieceType from "../piece_types/pieceTypes";
+import { getPawnPossibleMoves } from "./possibleMoves";
 
 export enum Color {
   BLACK = "BLACK",
@@ -23,22 +24,15 @@ export default function GameBoard({ myColor }: { myColor: Color }) {
   return <div>Placeholder text for the GameBoard component!</div>;
 }
 
-function getOtherPosition(square: Position): Position {
-  const otherPosition: Position = {
-    row: 7 - square.row,
-    col: 7 - square.col,
-  };
-  return otherPosition;
-}
 
 // HELPER FUNCTIONS:
-function isOccupiedWithMine(square: Position, gameState: GameState): boolean {
+export function isOccupiedWithMine(square: Position, gameState: GameState): boolean {
   const row: number = square.row;
   const col: number = square.col;
   return gameState.myPieces.pieces[row][col] !== PieceType.EMPTY_SQUARE;
 }
 
-function isOccupiedWithOther(square: Position, gameState: GameState): boolean {
+export function isOccupiedWithOther(square: Position, gameState: GameState): boolean {
   const row: number = square.row;
   const col: number = square.col;
   return gameState.otherPieces.pieces[row][col] !== PieceType.EMPTY_SQUARE;
@@ -71,41 +65,15 @@ function getPossibleMoves(
   initialPosition: Position,
   gameState: GameState
 ): Position[] {
-  const possibleMoves: Position[] = [];
+  let possibleMoves: Position[] = [];
 
   switch (pieceType) {
     case PieceType.EMPTY_SQUARE: {
       break;
     }
     case PieceType.PAWN: {
-      if (initialPosition.row < 7) {
-        const frontPosition: Position = {
-          row: initialPosition.row + 1,
-          col: initialPosition.col,
-        };
-        const leftDiagonal: Position = {
-          row: initialPosition.row + 1,
-          col: initialPosition.col - 1,
-        };
-        const rightDiagonal: Position = {
-          row: initialPosition.row + 1,
-          col: initialPosition.col + 1,
-        };
-        const otherFrontPosition: Position = getOtherPosition(frontPosition);
-        const otherLeftDiagonal: Position = getOtherPosition(leftDiagonal);
-        const otherRightDiagonal: Position = getOtherPosition(rightDiagonal);
-        if (!isOccupiedWithOther(otherFrontPosition, gameState)) {
-          possibleMoves.push(frontPosition);
-        }
-        if (!isOccupiedWithOther(otherLeftDiagonal, gameState)) {
-          possibleMoves.push(leftDiagonal);
-        }
-        if (!isOccupiedWithOther(otherRightDiagonal, gameState)) {
-          possibleMoves.push(rightDiagonal);
-        }
-      }
+      possibleMoves = getPawnPossibleMoves(initialPosition, gameState);
     }
   }
-
   return possibleMoves;
 }
