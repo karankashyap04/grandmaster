@@ -60,7 +60,7 @@ export function getRookPossibleMoves(
     if (isOccupiedWithMine(position, gameState)) {
       break;
     }
-    if (isOccupiedWithOther(position, gameState)) {
+    if (isOccupiedWithOther(getOtherPosition(position), gameState)) {
       possibleMoves.push(position);
       break;
     }
@@ -75,7 +75,7 @@ export function getRookPossibleMoves(
     if (isOccupiedWithMine(position, gameState)) {
       break;
     }
-    if (isOccupiedWithOther(position, gameState)) {
+    if (isOccupiedWithOther(getOtherPosition(position), gameState)) {
       possibleMoves.push(position);
       break;
     }
@@ -91,7 +91,7 @@ export function getRookPossibleMoves(
     if (isOccupiedWithMine(position, gameState)) {
       break;
     }
-    if (isOccupiedWithOther(position, gameState)) {
+    if (isOccupiedWithOther(getOtherPosition(position), gameState)) {
       possibleMoves.push(position);
       break;
     }
@@ -106,7 +106,7 @@ export function getRookPossibleMoves(
     if (isOccupiedWithMine(position, gameState)) {
       break;
     }
-    if (isOccupiedWithOther(position, gameState)) {
+    if (isOccupiedWithOther(getOtherPosition(position), gameState)) {
       possibleMoves.push(position);
       break;
     }
@@ -146,7 +146,91 @@ export function getKingPossibleMoves(
     possibleMoves.push(position);
   }
   possibleMoves = possibleMoves.filter(
-    (position: Position) => !isOccupiedWithOther(position, gameState)
+    (position: Position) =>
+      !isOccupiedWithOther(getOtherPosition(position), gameState)
+  );
+  return possibleMoves;
+}
+
+export function getBishopPossibleMoves(
+  initialPosition: Position,
+  gameState: GameState
+): Position[] {
+  let possibleMoves: Position[] = [];
+  // front right diagonal
+  let initialRow: number = initialPosition.row;
+  let initialCol: number = initialPosition.col;
+  let colShift: number = 1;
+  for (var i = initialRow + 1; i <= 7 && initialCol + colShift <= 7; i++) {
+    const position: Position = { row: i, col: initialCol + colShift };
+    if (isOccupiedWithMine(position, gameState)) {
+      break;
+    }
+    if (isOccupiedWithOther(getOtherPosition(position), gameState)) {
+      possibleMoves.push(position);
+      break;
+    }
+    possibleMoves.push(position);
+    colShift++;
+  }
+
+  // front left diagonal
+  colShift = 1;
+  for (i = initialRow + 1; i <= 7 && initialCol - colShift >= 0; i++) {
+    const position: Position = { row: i, col: initialCol - colShift };
+    if (isOccupiedWithMine(position, gameState)) {
+      break;
+    }
+    if (isOccupiedWithOther(getOtherPosition(position), gameState)) {
+      possibleMoves.push(position);
+      break;
+    }
+    possibleMoves.push(position);
+    colShift++;
+  }
+
+  // bottom right diagonal
+  colShift = 1;
+  for (i = initialRow - 1; i >= 0 && initialCol + colShift <= 7; i--) {
+    const position: Position = { row: i, col: initialCol + colShift };
+    if (isOccupiedWithMine(position, gameState)) {
+      break;
+    }
+    if (isOccupiedWithOther(getOtherPosition(position), gameState)) {
+      possibleMoves.push(position);
+      break;
+    }
+    possibleMoves.push(position);
+    colShift++;
+  }
+
+  // bottom left diagonal
+  colShift = 1;
+  for (i = initialRow - 1; i >= 0 && initialCol - colShift >= 0; i--) {
+    const position: Position = { row: i, col: initialCol - colShift };
+    if (isOccupiedWithMine(position, gameState)) {
+      break;
+    }
+    if (isOccupiedWithOther(getOtherPosition(position), gameState)) {
+      possibleMoves.push(position);
+      break;
+    }
+    possibleMoves.push(position);
+    colShift++;
+  }
+  return possibleMoves;
+}
+
+export function getQueenPossibleMoves(
+  initialPosition: Position,
+  gameState: GameState
+): Position[] {
+  let possibleMoves: Position[] = [];
+  possibleMoves = possibleMoves.concat(
+    getBishopPossibleMoves(initialPosition, gameState)
+  );
+  possibleMoves = possibleMoves.concat(
+    getRookPossibleMoves(initialPosition, gameState)
   );
   return possibleMoves;
 }
