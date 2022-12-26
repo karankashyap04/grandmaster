@@ -69,6 +69,11 @@ function isMoveValid(
   return possibleMoves.includes(finalPosition);
 }
 
+function isCheckPostition(gameState: GameState) {
+  return false;
+  // NEED TO ACTUALLY WRITE THIS FUNCTION
+}
+
 // NOTE: eventually migrate valid move checking to the server side
 
 // TODO: Need to add something here which will check if making sme move would open you up to being

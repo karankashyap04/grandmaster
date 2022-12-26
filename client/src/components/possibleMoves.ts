@@ -115,3 +115,38 @@ export function getRookPossibleMoves(
   }
   return possibleMoves;
 }
+
+export function getKingPossibleMoves(
+  initialPosition: Position,
+  gameState: GameState
+): Position[] {
+  let possibleMoves: Position[] = [];
+  // front positions
+  for (var i = -1; i <= 1; i++) {
+    const position: Position = {
+      row: initialPosition.row + 1,
+      col: initialPosition.col + i,
+    };
+    possibleMoves.push(position);
+  }
+  // left and right
+  for (var j = -1; i <= 1; i += 2) {
+    const position: Position = {
+      row: initialPosition.row,
+      col: initialPosition.col + j,
+    };
+    possibleMoves.push(position);
+  }
+  // behind positions
+  for (var k = -1; i <= 1; i++) {
+    const position: Position = {
+      row: initialPosition.row - 1,
+      col: initialPosition.col + k,
+    };
+    possibleMoves.push(position);
+  }
+  possibleMoves = possibleMoves.filter(
+    (position: Position) => !isOccupiedWithOther(position, gameState)
+  );
+  return possibleMoves;
+}
