@@ -1,7 +1,7 @@
 import React from "react";
 import { MovePieceMessage, Position } from "../message/message";
 import PieceType from "../piece_types/pieceTypes";
-import { getPawnPossibleMoves } from "./possibleMoves";
+import { getPawnPossibleMoves, getRookPossibleMoves } from "./possibleMoves";
 
 export enum Color {
   BLACK = "BLACK",
@@ -69,6 +69,10 @@ function isMoveValid(
   return possibleMoves.includes(finalPosition);
 }
 
+// NOTE: eventually migrate valid move checking to the server side
+
+// TODO: Need to add something here which will check if making sme move would open you up to being
+// directly checked (since these moves would no longer be considered valid)
 function getPossibleMoves(
   pieceType: PieceType,
   initialPosition: Position,
@@ -82,6 +86,14 @@ function getPossibleMoves(
     }
     case PieceType.PAWN: {
       possibleMoves = getPawnPossibleMoves(initialPosition, gameState);
+      break;
+    }
+    case PieceType.ROOK: {
+      possibleMoves = getRookPossibleMoves(initialPosition, gameState);
+      break;
+    }
+    default: {
+      // TODO: Add something here
     }
   }
   return possibleMoves;
