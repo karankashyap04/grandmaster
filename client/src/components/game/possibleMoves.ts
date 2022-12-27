@@ -1,4 +1,4 @@
-import { Position } from "../message/message";
+import { Position } from "../../message/message";
 import { GameState, isOccupiedWithMine, isOccupiedWithOther } from "./Game";
 
 function getOtherPosition(square: Position): Position {

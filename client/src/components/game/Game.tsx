@@ -1,7 +1,8 @@
-import React from "react";
-import { MovePieceMessage, Position } from "../message/message";
-import PieceType from "../piece_types/pieceTypes";
-import Board from "./Board";
+import React, { useState } from "react";
+import { MovePieceMessage, Position } from "../../message/message";
+import PieceType from "../../piece_types/pieceTypes";
+import Board from "../Board";
+import { getInitialPiecePositions } from "./initialGameState";
 import { getPawnPossibleMoves, getRookPossibleMoves } from "./possibleMoves";
 
 export enum Color {
@@ -22,10 +23,15 @@ export interface GameState {
 }
 
 export default function Game({ myColor }: { myColor: Color }) {
+  const [gameState, setGameState] = useState<GameState>({
+    myPieces: { pieces: getInitialPiecePositions() },
+    otherPieces: { pieces: getInitialPiecePositions() },
+    myColor: Color.WHITE, // assigning white as default for now; make this dynamic later
+  });
   return (
     <div>
       Placeholder text for the GameBoard component!
-      <Board />
+      <Board myColor={myColor} gameState={gameState} />
     </div>
   );
 }
@@ -82,7 +88,7 @@ function isCheckPostition(gameState: GameState) {
 
 // NOTE: eventually migrate valid move checking to the server side
 
-// TODO: Need to add something here which will check if making sme move would open you up to being
+// TODO: Need to add something here which will check if making some move would open you up to being
 // directly checked (since these moves would no longer be considered valid)
 function getPossibleMoves(
   pieceType: PieceType,
