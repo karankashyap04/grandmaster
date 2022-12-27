@@ -1,6 +1,7 @@
 import React from "react";
 import { MovePieceMessage, Position } from "../message/message";
 import PieceType from "../piece_types/pieceTypes";
+import Board from "./Board";
 import { getPawnPossibleMoves, getRookPossibleMoves } from "./possibleMoves";
 
 export enum Color {
@@ -20,8 +21,13 @@ export interface GameState {
   myColor: Color;
 }
 
-export default function GameBoard({ myColor }: { myColor: Color }) {
-  return <div>Placeholder text for the GameBoard component!</div>;
+export default function Game({ myColor }: { myColor: Color }) {
+  return (
+    <div>
+      Placeholder text for the GameBoard component!
+      <Board />
+    </div>
+  );
 }
 
 // HELPER FUNCTIONS:

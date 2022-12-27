@@ -1,0 +1,18 @@
+.chessboard {
+  height: 80vh;
+  aspect-ratio: 1 / 1;
+  margin: 2% auto;
+  border-collapse: collapse;
+}
+
+.whiteSquare {
+  height: 10vh;
+  width: 10vw;
+  background-color: blanchedalmond;
+}
+
+.blackSquare {
+  height: 10vh;
+  width: 10vw;
+  background-color: rgb(105, 55, 21);
+}

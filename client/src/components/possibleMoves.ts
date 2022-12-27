@@ -1,9 +1,5 @@
 import { Position } from "../message/message";
-import {
-  GameState,
-  isOccupiedWithMine,
-  isOccupiedWithOther,
-} from "./GameBoard";
+import { GameState, isOccupiedWithMine, isOccupiedWithOther } from "./Game";
 
 function getOtherPosition(square: Position): Position {
   const otherPosition: Position = {
