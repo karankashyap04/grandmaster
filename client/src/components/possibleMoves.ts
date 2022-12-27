@@ -234,3 +234,43 @@ export function getQueenPossibleMoves(
   );
   return possibleMoves;
 }
+
+function makePosition(row: number, col: number): Position {
+  const position: Position = {
+    row: row,
+    col: col,
+  };
+  return position;
+}
+
+export function getKnightPossibleMoves(
+  initialPosition: Position,
+  gameState: GameState
+): Position[] {
+  let possibleMoves: Position[] = [];
+  const initialRow: number = initialPosition.row;
+  const initialCol: number = initialPosition.col;
+  let candidateRowCols: [number, number][] = [
+    [initialRow + 2, initialCol - 1],
+    [initialRow + 2, initialCol + 1],
+    [initialRow - 1, initialCol - 2],
+    [initialRow + 1, initialCol - 2],
+    [initialRow - 2, initialCol - 1],
+    [initialRow - 2, initialCol + 1],
+    [initialRow - 1, initialCol + 2],
+    [initialRow + 1, initialCol + 2],
+  ];
+  let candidatePositions: Position[] = candidateRowCols.map(
+    (candidateRowCol: [number, number]) =>
+      makePosition(candidateRowCol[0], candidateRowCol[1])
+  );
+  possibleMoves = candidatePositions.filter(
+    (position: Position) =>
+      position.row < 0 &&
+      position.row > 7 &&
+      position.col < 0 &&
+      position.col > 7 &&
+      !isOccupiedWithMine(position, gameState)
+  );
+  return possibleMoves;
+}
