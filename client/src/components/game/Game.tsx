@@ -2,6 +2,7 @@ import React, { useState } from "react";
 import { MovePieceMessage, Position } from "../../message/message";
 import PieceType from "../../piece_types/pieceTypes";
 import Board from "../Board";
+import { Pawn } from "../piece/Piece";
 import { getInitialPiecePositions } from "./initialGameState";
 import { getPawnPossibleMoves, getRookPossibleMoves } from "./possibleMoves";
 
@@ -30,7 +31,6 @@ export default function Game({ myColor }: { myColor: Color }) {
   });
   return (
     <div>
-      Placeholder text for the GameBoard component!
       <Board myColor={myColor} gameState={gameState} />
     </div>
   );

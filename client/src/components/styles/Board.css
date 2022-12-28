@@ -9,10 +9,12 @@
   height: 10vh;
   width: 10vw;
   background-color: blanchedalmond;
+  text-align: center;
 }
 
 .blackSquare {
   height: 10vh;
   width: 10vw;
   background-color: rgb(105, 55, 21);
+  text-align: center;
 }
