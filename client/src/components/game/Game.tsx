@@ -2,9 +2,15 @@ import React, { useState } from "react";
 import { MovePieceMessage, Position } from "../../message/message";
 import PieceType from "../../piece_types/pieceTypes";
 import Board from "../Board";
-import { Pawn } from "../piece/Piece";
 import { getInitialPiecePositions } from "./initialGameState";
-import { getPawnPossibleMoves, getRookPossibleMoves } from "./possibleMoves";
+import {
+  getBishopPossibleMoves,
+  getKingPossibleMoves,
+  getKnightPossibleMoves,
+  getPawnPossibleMoves,
+  getQueenPossibleMoves,
+  getRookPossibleMoves,
+} from "./possibleMoves";
 
 export enum Color {
   BLACK = "BLACK",
@@ -98,9 +104,6 @@ function getPossibleMoves(
   let possibleMoves: Position[] = [];
 
   switch (pieceType) {
-    case PieceType.EMPTY_SQUARE: {
-      break;
-    }
     case PieceType.PAWN: {
       possibleMoves = getPawnPossibleMoves(initialPosition, gameState);
       break;
@@ -109,8 +112,24 @@ function getPossibleMoves(
       possibleMoves = getRookPossibleMoves(initialPosition, gameState);
       break;
     }
+    case PieceType.KNIGHT: {
+      possibleMoves = getKnightPossibleMoves(initialPosition, gameState);
+      break;
+    }
+    case PieceType.BISHOP: {
+      possibleMoves = getBishopPossibleMoves(initialPosition, gameState);
+      break;
+    }
+    case PieceType.KING: {
+      possibleMoves = getKingPossibleMoves(initialPosition, gameState);
+      break;
+    }
+    case PieceType.QUEEN: {
+      possibleMoves = getQueenPossibleMoves(initialPosition, gameState);
+      break;
+    }
     default: {
-      // TODO: Add something here
+      break;
     }
   }
   return possibleMoves;
