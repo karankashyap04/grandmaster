@@ -36,6 +36,7 @@ export default function Piece({ color, pieceType }: PieceProps) {
       return <Queen color={color} />;
     default: {
       console.log("An unexpected piece was expected to be rendered!");
+      console.log(pieceType);
       return <div></div>;
     }
   }

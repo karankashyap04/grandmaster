@@ -6,6 +6,8 @@ enum PieceType {
   QUEEN = "QUEEN",
   KING = "KING",
   EMPTY_SQUARE = "EMPTY_SQUARE",
+  SELECTED_SQUARE = "SELECTED_SQUARE",
+  POSSIBLE_SQUARE = "POSSIBLE_SQUARE",
 }
 
 export default PieceType;

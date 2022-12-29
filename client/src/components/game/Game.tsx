@@ -37,7 +37,7 @@ export default function Game({ myColor }: { myColor: Color }) {
   });
   return (
     <div>
-      <Board myColor={myColor} gameState={gameState} />
+      <Board myColor={myColor} gameState={gameState} setGameState={setGameState} />
     </div>
   );
 }
@@ -96,7 +96,7 @@ function isCheckPostition(gameState: GameState) {
 
 // TODO: Need to add something here which will check if making some move would open you up to being
 // directly checked (since these moves would no longer be considered valid)
-function getPossibleMoves(
+export function getPossibleMoves(
   pieceType: PieceType,
   initialPosition: Position,
   gameState: GameState

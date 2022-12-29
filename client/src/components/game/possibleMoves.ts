@@ -30,14 +30,29 @@ export function getPawnPossibleMoves(
     const otherFrontPosition: Position = getOtherPosition(frontPosition);
     const otherLeftDiagonal: Position = getOtherPosition(leftDiagonal);
     const otherRightDiagonal: Position = getOtherPosition(rightDiagonal);
-    if (!isOccupiedWithOther(otherFrontPosition, gameState)) {
+    if (
+      !isOccupiedWithOther(otherFrontPosition, gameState) &&
+      !isOccupiedWithMine(frontPosition, gameState)
+    ) {
       possibleMoves.push(frontPosition);
     }
-    if (!isOccupiedWithOther(otherLeftDiagonal, gameState)) {
+    if (isOccupiedWithOther(otherLeftDiagonal, gameState)) {
       possibleMoves.push(leftDiagonal);
     }
-    if (!isOccupiedWithOther(otherRightDiagonal, gameState)) {
+    if (isOccupiedWithOther(otherRightDiagonal, gameState)) {
       possibleMoves.push(rightDiagonal);
+    }
+    if (initialPosition.row === 1) {
+      const doublePushPosition: Position = {
+        row: initialPosition.row + 2,
+        col: initialPosition.col,
+      };
+      if (
+        !isOccupiedWithMine(doublePushPosition, gameState) &&
+        !isOccupiedWithOther(getOtherPosition(doublePushPosition), gameState)
+      ) {
+        possibleMoves.push(doublePushPosition);
+      }
     }
   }
   return possibleMoves;

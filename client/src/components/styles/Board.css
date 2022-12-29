@@ -18,3 +18,13 @@
   background-color: rgb(105, 55, 21);
   text-align: center;
 }
+
+.selectedSquare {
+  background-color: lightcoral;
+  text-align: center;
+}
+
+.possibleSquare {
+  background-color: gold;
+  text-align: center;
+}
