@@ -277,10 +277,10 @@ export function getKnightPossibleMoves(
   );
   possibleMoves = candidatePositions.filter(
     (position: Position) =>
-      position.row < 0 &&
-      position.row > 7 &&
-      position.col < 0 &&
-      position.col > 7 &&
+      position.row >= 0 &&
+      position.row <= 7 &&
+      position.col >= 0 &&
+      position.col <= 7 &&
       !isOccupiedWithMine(position, gameState)
   );
   return possibleMoves;
