@@ -21,11 +21,9 @@ export default function Board({
   gameState,
   setGameState,
 }: BoardProps) {
-  console.log("Board rendered");
   const otherColor: Color = myColor === Color.WHITE ? Color.BLACK : Color.WHITE;
   let rows: number[] = [7, 6, 5, 4, 3, 2, 1, 0];
   let cols: number[] = [0, 1, 2, 3, 4, 5, 6, 7];
-  // const [isPieceSelected, setIsPieceSelected] = useState<boolean>(false);
   const [colorState, setColorState] = useState<GameState>(
     JSON.parse(JSON.stringify(gameState))
   );
@@ -59,8 +57,6 @@ export default function Board({
                       setGameState,
                       colorState,
                       setColorState
-                      // isPieceSelected,
-                      // setIsPieceSelected
                     );
                   }}
                 >
@@ -82,12 +78,9 @@ function handleClick(
   setGameState: Dispatch<SetStateAction<GameState>>,
   colorState: GameState,
   setColorState: Dispatch<SetStateAction<GameState>>
-  // isPieceSelected: boolean,
-  // setIsPieceSelected: Dispatch<SetStateAction<boolean>>
 ) {
   const pieceType: PieceType = gameState.myPieces.pieces[row][col];
   if (!isPieceSelected) {
-    console.log("inside if");
     if (pieceType !== PieceType.EMPTY_SQUARE) {
       lastSelectedPiece = pieceType;
       lastSelectedPosition = { row: row, col: col };
@@ -102,46 +95,30 @@ function handleClick(
         newColorState.myPieces.pieces[position.row][position.col] =
           PieceType.POSSIBLE_SQUARE;
       });
-      // setIsPieceSelected(true);
       isPieceSelected = true;
       setColorState(newColorState);
     }
     return;
   }
-  // add code to dictate what happens when a piece has already been selected (move the piece if you can or select a piece if that is more apt, or do neither, based on which square is clicked)
   const clickedPosition: Position = { row: row, col: col };
   const possibleMoveStrings: string[] = possibleMoves.map(
     (position: Position) => JSON.stringify(position)
   );
   if (possibleMoveStrings.includes(JSON.stringify(clickedPosition))) {
-    console.log("inside first if");
     gameState.myPieces.pieces[row][col] = lastSelectedPiece;
     const oldRow = lastSelectedPosition.row;
     const oldCol = lastSelectedPosition.col;
     gameState.myPieces.pieces[oldRow][oldCol] = PieceType.EMPTY_SQUARE;
     setGameState(gameState);
     setColorState(JSON.parse(JSON.stringify(gameState)));
-    // setIsPieceSelected(false);
     isPieceSelected = false;
   } else if (pieceType === PieceType.EMPTY_SQUARE) {
-    // setIsPieceSelected(false);
     isPieceSelected = false;
     setColorState(JSON.parse(JSON.stringify(gameState)));
   } else {
-    // setIsPieceSelected(false);
-    // setColorState(JSON.parse(JSON.stringify(gameState)));
     colorState.myPieces = JSON.parse(JSON.stringify(gameState.myPieces));
     isPieceSelected = false;
-    handleClick(
-      row,
-      col,
-      gameState,
-      setGameState,
-      colorState,
-      setColorState
-      // isPieceSelected,
-      // setIsPieceSelected
-    );
+    handleClick(row, col, gameState, setGameState, colorState, setColorState);
   }
 }
 
