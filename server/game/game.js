@@ -4,7 +4,11 @@ const gameToPlayer = new Map();
 function addPlayerToGame(playerUsername, room) {
   playerToGame.set(playerUsername, room);
   if (gameToPlayer.has(room)) {
-    gameToPlayer.get(room).push(playerUsername);
+    if (gameToPlayer.get(room).length < 2) {
+      gameToPlayer.get(room).push(playerUsername);
+    } else {
+      // send some message if this happens -- trying to play against a user who is already playing a game at the moment
+    }
   } else {
     gameToPlayer.set(room, [playerUsername]);
   }

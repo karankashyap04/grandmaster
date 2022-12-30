@@ -1,7 +1,7 @@
 import React, { useState, Dispatch, SetStateAction } from "react";
 import { Color } from "./game/Game";
 import { Socket } from "socket.io-client";
-import { sendCreateGameMessage } from "../message/message";
+import { sendCreateGameMessage, sendJoinGameMessage } from "../message/message";
 import "./styles/Home.css";
 
 interface ControlledInputProps {
@@ -27,22 +27,29 @@ function ControlledInput({
   );
 }
 
-export default function Home({ socket }: { socket: Socket }) {
+interface HomeProps {
+  socket: Socket;
+  color: Color;
+  setColor: Dispatch<SetStateAction<Color>>;
+}
+
+export default function Home({ socket, color, setColor }: HomeProps) {
   const [username, setUsername] = useState<string>("");
-  const [color, setColor] = useState<Color>(Color.WHITE);
+  // const [color, setColor] = useState<Color>(Color.WHITE);
+  const [opponent, setOpponent] = useState<string>("");
   return (
     <div className="home-container">
       <h1 className="title">Grandmaster</h1>
       <div className="container">
+        <ControlledInput
+          value={username}
+          setValue={setUsername}
+          placeholder={"Enter username:"}
+          className="username-input"
+        />
         <div className="row">
           <div className="col-6">
             <h3>Create a new game</h3>
-            <ControlledInput
-              value={username}
-              setValue={setUsername}
-              placeholder={"Enter username:"}
-              className="username-input"
-            />
             <h4>Which color do you want to be?</h4>
             <form className="form-inline">
               <div className="container color-pick">
@@ -93,7 +100,24 @@ export default function Home({ socket }: { socket: Socket }) {
               Create a New Game
             </button>
           </div>
-          <div className="col-6"></div>
+          <div className="col-6">
+            <h3>Join an existing game</h3>
+            <ControlledInput
+              value={opponent}
+              setValue={setOpponent}
+              placeholder={"Opponent's username:"}
+              className="opponent-name-input"
+            />
+            <p>Note: The opponent must have started a game already</p>
+            <button
+              className="btn btn-outline-dark"
+              onClick={() => {
+                sendJoinGameMessage(socket, username, opponent);
+              }}
+            >
+              Play against a chosen opponent
+            </button>
+          </div>
         </div>
       </div>
     </div>

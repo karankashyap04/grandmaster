@@ -4,7 +4,7 @@
 }
 
 .title {
-  margin-bottom: 5%;
+  margin-bottom: 2%;
 }
 
 .username-input {
@@ -22,4 +22,9 @@
 
 .color-right-label {
   text-align: left;
+}
+
+.opponent-name-input {
+  width: 15vw;
+  margin: 2%;
 }

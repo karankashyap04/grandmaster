@@ -48,3 +48,26 @@ export function sendCreateGameMessage(
   const message: CreateGameMessage = { username: username, color: color };
   socket.emit("CREATE_GAME", message);
 }
+
+export interface JoinGameMessage {
+  username: string;
+  opponentUsername: string;
+}
+
+export function sendJoinGameMessage(
+  socket: Socket,
+  username: string,
+  opponentUsername: string
+) {
+  const message: JoinGameMessage = {
+    username: username,
+    opponentUsername: opponentUsername,
+  };
+  socket.emit("JOIN_GAME", message);
+}
+
+export interface assignColorMessage {
+  color: Color;
+}
+
+export interface startGameMessage {}
