@@ -1,7 +1,7 @@
 import React, { useState, Dispatch, SetStateAction } from "react";
 import { Color } from "./game/Game";
 import { Socket } from "socket.io-client";
-import { sendCreateRoomMessage } from "../message/message";
+import { sendCreateGameMessage } from "../message/message";
 import "./styles/Home.css";
 
 interface ControlledInputProps {
@@ -87,7 +87,7 @@ export default function Home({ socket }: { socket: Socket }) {
             <button
               className="btn btn-outline-dark"
               onClick={() => {
-                sendCreateRoomMessage(socket, username, color);
+                sendCreateGameMessage(socket, username, color);
               }}
             >
               Create a New Game

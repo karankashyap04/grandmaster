@@ -35,16 +35,16 @@ export interface CheckmateWonMessage {
 
 // NOTE: we might not need the message types enum
 
-export interface CreateRoomMessage {
+export interface CreateGameMessage {
   username: string;
   color: Color;
 }
 
-export function sendCreateRoomMessage(
+export function sendCreateGameMessage(
   socket: Socket,
   username: string,
   color: Color
 ) {
-  const message: CreateRoomMessage = { username: username, color: color };
-  socket.emit("CREATE_ROOM", message);
+  const message: CreateGameMessage = { username: username, color: color };
+  socket.emit("CREATE_GAME", message);
 }
