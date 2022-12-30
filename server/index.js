@@ -3,7 +3,7 @@ const cors = require("cors");
 const http = require("http");
 const { Server } = require("socket.io");
 
-import { addPlayerToRoom, playerToRoom } from "./rooms/room";
+import { addPlayerToRoom, playerToRoom, generateRoomCode } from "./rooms/room";
 
 const app = express();
 app.use(cors());
@@ -22,7 +22,7 @@ io.on("connection", (socket) => {
 
   socket.on("create_room", (data) => {
     const { username, color } = data;
-    const room = "some-unique-string";
+    const room = generateRoomCode();
     socket.join(room);
     addPlayerToRoom(username, room);
   });

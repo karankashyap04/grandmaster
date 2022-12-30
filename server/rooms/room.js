@@ -9,3 +9,15 @@ export function addPlayerToRoom(playerUsername, room) {
     roomToPlayer.set(room, [playerUsername]);
   }
 }
+
+function createRoomCode() {
+  return Math.floor(Math.random() * Math.pow(10, 6)).toString();
+}
+
+export function generateRoomCode() {
+  var room = createRoomCode();
+  while (roomToPlayer.has(room)) {
+    room = createRoomCode();
+  }
+  return room;
+}
