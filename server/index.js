@@ -4,6 +4,7 @@ const http = require("http");
 const { Server } = require("socket.io");
 
 import { addPlayerToRoom, playerToRoom, generateRoomCode } from "./rooms/room";
+import { playerToColor, addPlayerColor } from "./color";
 
 const app = express();
 app.use(cors());
@@ -25,14 +26,22 @@ io.on("connection", (socket) => {
     const room = generateRoomCode();
     socket.join(room);
     addPlayerToRoom(username, room);
+    addPlayerColor(username, color);
   });
 
   socket.on("join_room", (data) => {
     const { username, opponentUsername } = data;
-    if (playerToRoom.has(username)) {
-      const room = playerToRoom.get(username);
+    if (playerToRoom.has(opponentUsername)) {
+      const room = playerToRoom.get(OpponentUsername);
       socket.join(room);
       addPlayerToRoom(username, room);
+      if (playerToColor.has(opponentUsername)) {
+        const opponentColor = playerToColor.get(opponentUsername);
+        const color = opponentColor === "WHITE" ? "BLACK" : "WHITE";
+        addPlayerColor(username, color);
+      } else {
+        // return some error message if this happens (opponent's color should be defined)
+      }
       // ensure that there are now 2 players in the room and then do something to start the game
     }
     // return some error message if this happens (no valid opponent)
