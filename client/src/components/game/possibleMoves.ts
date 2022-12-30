@@ -158,7 +158,10 @@ export function getKingPossibleMoves(
   }
   possibleMoves = possibleMoves.filter(
     (position: Position) =>
-      !isOccupiedWithOther(getOtherPosition(position), gameState)
+      !(
+        isOccupiedWithOther(getOtherPosition(position), gameState) ||
+        isOccupiedWithMine(position, gameState)
+      )
   );
   return possibleMoves;
 }
