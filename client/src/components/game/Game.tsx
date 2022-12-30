@@ -30,10 +30,11 @@ export interface GameState {
 }
 
 export default function Game({ myColor }: { myColor: Color }) {
+  const otherColor: Color = myColor === Color.WHITE ? Color.BLACK : Color.WHITE;
   const [gameState, setGameState] = useState<GameState>({
-    myPieces: { pieces: getInitialPiecePositions() },
-    otherPieces: { pieces: getInitialPiecePositions() },
-    myColor: Color.WHITE, // assigning white as default for now; make this dynamic later
+    myPieces: { pieces: getInitialPiecePositions(myColor) },
+    otherPieces: { pieces: getInitialPiecePositions(otherColor) },
+    myColor: myColor, // assigning white as default for now; make this dynamic later
   });
   return (
     <div>

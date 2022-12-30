@@ -138,9 +138,9 @@ function getPieceAtSquare(
   ) {
     return <div></div>;
   } else if (otherPieceType === PieceType.EMPTY_SQUARE) {
-    return <Piece color={otherColor} pieceType={myPieceType} />;
+    return <Piece color={myColor} pieceType={myPieceType} />;
   } else if (myPieceType === PieceType.EMPTY_SQUARE) {
-    return <Piece color={myColor} pieceType={otherPieceType} />;
+    return <Piece color={otherColor} pieceType={otherPieceType} />;
   }
   console.log("Both players unexpectedly had a piece at the same position!");
   return <div></div>;

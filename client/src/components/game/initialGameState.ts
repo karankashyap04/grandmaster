@@ -1,13 +1,14 @@
 import PieceType from "../../piece_types/pieceTypes";
+import { Color } from "./Game";
 
-export function getInitialPiecePositions(): PieceType[][] {
+export function getInitialPiecePositions(color: Color): PieceType[][] {
   const piecePositions = [
     [
       PieceType.ROOK,
       PieceType.KNIGHT,
       PieceType.BISHOP,
-      PieceType.QUEEN,
-      PieceType.KING,
+      color === Color.WHITE ? PieceType.QUEEN : PieceType.KING,
+      color === Color.WHITE ? PieceType.KING : PieceType.QUEEN,
       PieceType.BISHOP,
       PieceType.KNIGHT,
       PieceType.ROOK,
