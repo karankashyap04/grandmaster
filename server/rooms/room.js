@@ -1,7 +1,7 @@
-export const playerToRoom = new Map();
-export const roomToPlayer = new Map();
+const playerToRoom = new Map();
+const roomToPlayer = new Map();
 
-export function addPlayerToRoom(playerUsername, room) {
+function addPlayerToRoom(playerUsername, room) {
   playerToRoom.set(playerUsername, room);
   if (roomToPlayer.has(room)) {
     roomToPlayer.get(room).push(playerUsername);
@@ -14,10 +14,17 @@ function createRoomCode() {
   return Math.floor(Math.random() * Math.pow(10, 6)).toString();
 }
 
-export function generateRoomCode() {
+function generateRoomCode() {
   var room = createRoomCode();
   while (roomToPlayer.has(room)) {
     room = createRoomCode();
   }
   return room;
 }
+
+module.exports = {
+  playerToRoom,
+  roomToPlayer,
+  addPlayerToRoom,
+  generateRoomCode,
+};

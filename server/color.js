@@ -1,5 +1,7 @@
-export const playerToColor = new Map();
+const playerToColor = new Map();
 
-export function addPlayerColor(username, color) {
+function addPlayerColor(username, color) {
   playerToColor.set(username, color);
 }
+
+module.exports = { playerToColor, addPlayerColor };

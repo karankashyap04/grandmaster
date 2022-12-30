@@ -3,8 +3,12 @@ const cors = require("cors");
 const http = require("http");
 const { Server } = require("socket.io");
 
-import { addPlayerToRoom, playerToRoom, generateRoomCode } from "./rooms/room";
-import { playerToColor, addPlayerColor } from "./color";
+const {
+  addPlayerToRoom,
+  playerToRoom,
+  generateRoomCode,
+} = require("./rooms/room");
+const { playerToColor, addPlayerColor } = require("./color");
 
 const app = express();
 app.use(cors());
@@ -21,15 +25,19 @@ const io = new Server(server, {
 io.on("connection", (socket) => {
   console.log(`A new user has connected. Socket id: ${socket.id}`);
 
-  socket.on("create_room", (data) => {
+  socket.on("CREATE_ROOM", (data) => {
+    console.log("received create room message");
     const { username, color } = data;
+    console.log("username: " + username);
+    console.log("color: " + color);
     const room = generateRoomCode();
+    console.log("room: " + room);
     socket.join(room);
     addPlayerToRoom(username, room);
     addPlayerColor(username, color);
   });
 
-  socket.on("join_room", (data) => {
+  socket.on("JOIN_ROOM", (data) => {
     const { username, opponentUsername } = data;
     if (playerToRoom.has(opponentUsername)) {
       const room = playerToRoom.get(OpponentUsername);

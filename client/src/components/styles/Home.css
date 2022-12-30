@@ -1,0 +1,25 @@
+.home-container {
+  padding: 2%;
+  text-align: center;
+}
+
+.title {
+  margin-bottom: 5%;
+}
+
+.username-input {
+  margin: 2%;
+}
+
+.color-pick {
+  margin: 2% 0;
+  padding: 0 30%;
+}
+
+.color-left-label {
+  text-align: right;
+}
+
+.color-right-label {
+  text-align: left;
+}
