@@ -36,6 +36,9 @@ export default function Board({
   const [colorState, setColorState] = useState<GameState>(
     JSON.parse(JSON.stringify(gameState))
   );
+  const [isTurn, setIsTurn] = useState<boolean>(
+    myColor === Color.WHITE ? true : false
+  );
 
   useEffect(() => {
     socket.on("MOVE_PIECE", (data: MovePieceMessage) => {
@@ -50,6 +53,7 @@ export default function Board({
         PieceType.EMPTY_SQUARE; // in case they are killing one of my pieces
       newGameState.otherPieces.pieces[newRow][newCol] = data.pieceType;
       setGameState(newGameState);
+      setIsTurn(true);
     });
   }, [socket]);
 
@@ -76,16 +80,19 @@ export default function Board({
                 <td
                   className={color}
                   onClick={() => {
-                    handleClick(
-                      row,
-                      col,
-                      gameState,
-                      setGameState,
-                      colorState,
-                      setColorState,
-                      socket,
-                      username
-                    );
+                    if (isTurn) {
+                      handleClick(
+                        row,
+                        col,
+                        gameState,
+                        setGameState,
+                        colorState,
+                        setColorState,
+                        socket,
+                        username,
+                        setIsTurn
+                      );
+                    }
                   }}
                 >
                   {getPieceAtSquare(row, col, myColor, otherColor, gameState)}
@@ -107,7 +114,8 @@ function handleClick(
   colorState: GameState,
   setColorState: Dispatch<SetStateAction<GameState>>,
   socket: Socket,
-  username: string
+  username: string,
+  setIsTurn: Dispatch<SetStateAction<boolean>>
 ) {
   const pieceType: PieceType = gameState.myPieces.pieces[row][col];
   if (!isPieceSelected) {
@@ -143,13 +151,6 @@ function handleClick(
     setGameState(gameState);
     setColorState(JSON.parse(JSON.stringify(gameState)));
     isPieceSelected = false;
-    // const movePieceMessage: MovePieceMessage = {
-    //   initialPosition: lastSelectedPosition,
-    //   finalPosition: clickedPosition,
-    //   pieceType: lastSelectedPiece,
-    //   username: username,
-    // };
-    // socket.emit("MOVE_PIECE", movePieceMessage);
     sendMovePieceMessage(
       socket,
       lastSelectedPosition,
@@ -157,6 +158,7 @@ function handleClick(
       lastSelectedPiece,
       username
     );
+    setIsTurn(false);
   } else if (pieceType === PieceType.EMPTY_SQUARE) {
     isPieceSelected = false;
     setColorState(JSON.parse(JSON.stringify(gameState)));
@@ -171,7 +173,8 @@ function handleClick(
       colorState,
       setColorState,
       socket,
-      username
+      username,
+      setIsTurn
     );
   }
 }
