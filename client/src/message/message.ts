@@ -31,6 +31,16 @@ export interface MovePieceMessage {
   username: string;
 }
 
+export function sendMovePieceMessage(socket: Socket, initialPosition: Position, finalPosition: Position, pieceType: PieceType, username: string) {
+  const message: MovePieceMessage = {
+    initialPosition: initialPosition,
+    finalPosition: finalPosition,
+    pieceType: pieceType,
+    username: username
+  };
+  socket.emit("MOVE_PIECE", message);
+}
+
 export interface CheckmateLostMessage {
   type: MessageType.CHECKMATE_LOST;
 }

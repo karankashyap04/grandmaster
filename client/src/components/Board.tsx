@@ -1,6 +1,10 @@
 import React, { useState, useEffect, Dispatch, SetStateAction } from "react";
 import { Socket } from "socket.io-client";
-import { MovePieceMessage, Position } from "../message/message";
+import {
+  MovePieceMessage,
+  Position,
+  sendMovePieceMessage,
+} from "../message/message";
 import PieceType from "../piece_types/pieceTypes";
 import { Color, GameState, getPossibleMoves } from "./game/Game";
 import Piece from "./piece/Piece";
@@ -139,13 +143,20 @@ function handleClick(
     setGameState(gameState);
     setColorState(JSON.parse(JSON.stringify(gameState)));
     isPieceSelected = false;
-    const movePieceMessage: MovePieceMessage = {
-      initialPosition: lastSelectedPosition,
-      finalPosition: clickedPosition,
-      pieceType: lastSelectedPiece,
-      username: username,
-    };
-    socket.emit("MOVE_PIECE", movePieceMessage);
+    // const movePieceMessage: MovePieceMessage = {
+    //   initialPosition: lastSelectedPosition,
+    //   finalPosition: clickedPosition,
+    //   pieceType: lastSelectedPiece,
+    //   username: username,
+    // };
+    // socket.emit("MOVE_PIECE", movePieceMessage);
+    sendMovePieceMessage(
+      socket,
+      lastSelectedPosition,
+      clickedPosition,
+      lastSelectedPiece,
+      username
+    );
   } else if (pieceType === PieceType.EMPTY_SQUARE) {
     isPieceSelected = false;
     setColorState(JSON.parse(JSON.stringify(gameState)));

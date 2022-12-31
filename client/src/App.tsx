@@ -36,8 +36,6 @@ function App() {
           setUsername={setUsername}
         />
       )}
-      {/* <Home />
-      <Game myColor={Color.BLACK} /> */}
     </div>
   );
 }
