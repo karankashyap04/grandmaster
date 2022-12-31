@@ -31,11 +31,11 @@ interface HomeProps {
   socket: Socket;
   color: Color;
   setColor: Dispatch<SetStateAction<Color>>;
+  username: string;
+  setUsername: Dispatch<SetStateAction<string>>;
 }
 
-export default function Home({ socket, color, setColor }: HomeProps) {
-  const [username, setUsername] = useState<string>("");
-  // const [color, setColor] = useState<Color>(Color.WHITE);
+export default function Home({ socket, color, setColor, username, setUsername }: HomeProps) {
   const [opponent, setOpponent] = useState<string>("");
   return (
     <div className="home-container">

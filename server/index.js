@@ -28,7 +28,7 @@ io.on("connection", (socket) => {
   console.log(`A new user has connected. Socket id: ${socket.id}`);
 
   socket.on("CREATE_GAME", (data) => {
-    console.log("received create game message");
+    console.log("server received create game message");
     const { username, color } = data;
     const gameCode = generateGameCode();
     socket.join(gameCode);
@@ -37,7 +37,7 @@ io.on("connection", (socket) => {
   });
 
   socket.on("JOIN_GAME", (data) => {
-    console.log("received join game message");
+    console.log("server received join game message");
     const { username, opponentUsername } = data;
     console.log("username: " + username);
     console.log("opponentUsername: " + opponentUsername);
@@ -64,6 +64,18 @@ io.on("connection", (socket) => {
       socket.emit("START_GAME", startGameMessage);
     }
     // return some error message if this happens (no valid opponent)
+  });
+
+  socket.on("MOVE_PIECE", (data) => {
+    console.log("server received move piece message");
+    console.log(data);
+    const { initialPosition, finalPosition, pieceType, username } = data;
+    if (playerToGame.has(username)) {
+      const gameCode = playerToGame.get(username);
+      socket.to(gameCode).emit("MOVE_PIECE", data); // send the move_piece message to the other client in the game
+    } else {
+      // return some error message here -- this should never happen
+    }
   });
 });
 

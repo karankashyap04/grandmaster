@@ -9,6 +9,7 @@ const socket: Socket = io("http://localhost:9000");
 function App() {
   const [isGameStarted, setIsGameStarted] = useState<boolean>(false);
   const [color, setColor] = useState<Color>(Color.WHITE);
+  const [username, setUsername] = useState<string>("");
 
   useEffect(() => {
     socket.on("ASSIGN_COLOR", (data: assignColorMessage) => {
@@ -25,9 +26,15 @@ function App() {
   return (
     <div>
       {isGameStarted ? (
-        <Game myColor={color} />
+        <Game myColor={color} socket={socket} username={username} />
       ) : (
-        <Home socket={socket} color={color} setColor={setColor} />
+        <Home
+          socket={socket}
+          color={color}
+          setColor={setColor}
+          username={username}
+          setUsername={setUsername}
+        />
       )}
       {/* <Home />
       <Game myColor={Color.BLACK} /> */}

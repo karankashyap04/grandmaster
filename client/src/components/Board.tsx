@@ -1,5 +1,6 @@
-import React, { useState, Dispatch, SetStateAction } from "react";
-import { Position } from "../message/message";
+import React, { useState, useEffect, Dispatch, SetStateAction } from "react";
+import { Socket } from "socket.io-client";
+import { MovePieceMessage, Position } from "../message/message";
 import PieceType from "../piece_types/pieceTypes";
 import { Color, GameState, getPossibleMoves } from "./game/Game";
 import Piece from "./piece/Piece";
@@ -14,12 +15,16 @@ export interface BoardProps {
   myColor: Color;
   gameState: GameState;
   setGameState: Dispatch<SetStateAction<GameState>>;
+  socket: Socket;
+  username: string;
 }
 
 export default function Board({
   myColor,
   gameState,
   setGameState,
+  socket,
+  username,
 }: BoardProps) {
   const otherColor: Color = myColor === Color.WHITE ? Color.BLACK : Color.WHITE;
   let rows: number[] = [7, 6, 5, 4, 3, 2, 1, 0];
@@ -27,6 +32,26 @@ export default function Board({
   const [colorState, setColorState] = useState<GameState>(
     JSON.parse(JSON.stringify(gameState))
   );
+
+  useEffect(() => {
+    socket.on("MOVE_PIECE", (data: MovePieceMessage) => {
+      console.log("received a move_piece message on the client-side");
+      console.log(data);
+      const newGameState: GameState = { ...gameState };
+      const oldRow: number = data.initialPosition.row;
+      const oldCol: number = data.initialPosition.col;
+      const newRow: number = data.finalPosition.row;
+      const newCol: number = data.finalPosition.col;
+      newGameState.otherPieces.pieces[oldRow][oldCol] = PieceType.EMPTY_SQUARE;
+      newGameState.myPieces.pieces[7 - newRow][7 - newCol] =
+        PieceType.EMPTY_SQUARE; // in case they are killing one of my pieces
+      newGameState.otherPieces.pieces[newRow][newCol] = data.pieceType;
+      console.log("newGameState");
+      console.log(newGameState);
+      setGameState(newGameState);
+    });
+  }, [socket]);
+
   return (
     <table className="chessboard">
       {rows.map((row: number) => {
@@ -56,7 +81,9 @@ export default function Board({
                       gameState,
                       setGameState,
                       colorState,
-                      setColorState
+                      setColorState,
+                      socket,
+                      username
                     );
                   }}
                 >
@@ -77,7 +104,9 @@ function handleClick(
   gameState: GameState,
   setGameState: Dispatch<SetStateAction<GameState>>,
   colorState: GameState,
-  setColorState: Dispatch<SetStateAction<GameState>>
+  setColorState: Dispatch<SetStateAction<GameState>>,
+  socket: Socket,
+  username: string
 ) {
   const pieceType: PieceType = gameState.myPieces.pieces[row][col];
   if (!isPieceSelected) {
@@ -112,13 +141,29 @@ function handleClick(
     setGameState(gameState);
     setColorState(JSON.parse(JSON.stringify(gameState)));
     isPieceSelected = false;
+    const movePieceMessage: MovePieceMessage = {
+      initialPosition: lastSelectedPosition,
+      finalPosition: clickedPosition,
+      pieceType: lastSelectedPiece,
+      username: username,
+    };
+    socket.emit("MOVE_PIECE", movePieceMessage);
   } else if (pieceType === PieceType.EMPTY_SQUARE) {
     isPieceSelected = false;
     setColorState(JSON.parse(JSON.stringify(gameState)));
   } else {
     colorState.myPieces = JSON.parse(JSON.stringify(gameState.myPieces));
     isPieceSelected = false;
-    handleClick(row, col, gameState, setGameState, colorState, setColorState);
+    handleClick(
+      row,
+      col,
+      gameState,
+      setGameState,
+      colorState,
+      setColorState,
+      socket,
+      username
+    );
   }
 }
 

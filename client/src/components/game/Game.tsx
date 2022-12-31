@@ -1,4 +1,5 @@
 import React, { useState } from "react";
+import { Socket } from "socket.io-client";
 import { MovePieceMessage, Position } from "../../message/message";
 import PieceType from "../../piece_types/pieceTypes";
 import Board from "../Board";
@@ -28,7 +29,13 @@ export interface GameState {
   otherPieces: UserPiecePositions;
 }
 
-export default function Game({ myColor }: { myColor: Color }) {
+interface GameProps {
+  myColor: Color;
+  socket: Socket;
+  username: string;
+}
+
+export default function Game({ myColor, socket, username }: GameProps) {
   const otherColor: Color = myColor === Color.WHITE ? Color.BLACK : Color.WHITE;
   const [gameState, setGameState] = useState<GameState>({
     myPieces: { pieces: getInitialPiecePositions(myColor) },
@@ -36,7 +43,13 @@ export default function Game({ myColor }: { myColor: Color }) {
   });
   return (
     <div>
-      <Board myColor={myColor} gameState={gameState} setGameState={setGameState} />
+      <Board
+        myColor={myColor}
+        gameState={gameState}
+        setGameState={setGameState}
+        socket={socket}
+        username={username}
+      />
     </div>
   );
 }
@@ -64,20 +77,20 @@ function isMoveValid(
   moveMessage: MovePieceMessage,
   gameState: GameState
 ): boolean {
-  const initialRow: number = moveMessage.data.initialPosition.row;
-  const initialColumn: number = moveMessage.data.initialPosition.col;
+  const initialRow: number = moveMessage.initialPosition.row;
+  const initialColumn: number = moveMessage.initialPosition.col;
   const initialSquarePiece =
     gameState.myPieces.pieces[initialRow][initialColumn];
-  const pieceType: PieceType = moveMessage.data.pieceType;
+  const pieceType: PieceType = moveMessage.pieceType;
   if (initialSquarePiece !== pieceType) {
     return false;
   }
-  if (isOccupiedWithMine(moveMessage.data.finalPosition, gameState)) {
+  if (isOccupiedWithMine(moveMessage.finalPosition, gameState)) {
     return false;
   }
 
-  const initialPosition: Position = moveMessage.data.initialPosition;
-  const finalPosition: Position = moveMessage.data.finalPosition;
+  const initialPosition: Position = moveMessage.initialPosition;
+  const finalPosition: Position = moveMessage.finalPosition;
   const possibleMoves: Position[] = getPossibleMoves(
     pieceType,
     initialPosition,
