@@ -36,7 +36,6 @@ export default function Board({
   useEffect(() => {
     socket.on("MOVE_PIECE", (data: MovePieceMessage) => {
       console.log("received a move_piece message on the client-side");
-      console.log(data);
       const newGameState: GameState = { ...gameState };
       const oldRow: number = data.initialPosition.row;
       const oldCol: number = data.initialPosition.col;
@@ -46,8 +45,6 @@ export default function Board({
       newGameState.myPieces.pieces[7 - newRow][7 - newCol] =
         PieceType.EMPTY_SQUARE; // in case they are killing one of my pieces
       newGameState.otherPieces.pieces[newRow][newCol] = data.pieceType;
-      console.log("newGameState");
-      console.log(newGameState);
       setGameState(newGameState);
     });
   }, [socket]);
@@ -134,6 +131,7 @@ function handleClick(
     (position: Position) => JSON.stringify(position)
   );
   if (possibleMoveStrings.includes(JSON.stringify(clickedPosition))) {
+    gameState.otherPieces.pieces[7 - row][7 - col] = PieceType.EMPTY_SQUARE; // in case one of the other player's pieces is killed
     gameState.myPieces.pieces[row][col] = lastSelectedPiece;
     const oldRow = lastSelectedPosition.row;
     const oldCol = lastSelectedPosition.col;

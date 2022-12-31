@@ -68,7 +68,6 @@ io.on("connection", (socket) => {
 
   socket.on("MOVE_PIECE", (data) => {
     console.log("server received move piece message");
-    console.log(data);
     const { initialPosition, finalPosition, pieceType, username } = data;
     if (playerToGame.has(username)) {
       const gameCode = playerToGame.get(username);
