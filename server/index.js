@@ -70,6 +70,16 @@ io.on("connection", (socket) => {
       // return some error message here -- this should never happen
     }
   });
+
+  socket.on("YOU_WIN", (data) => {
+    const { username } = data;
+    if (playerToGame.has(username)) {
+      const gameCode = playerToGame.get(username);
+      socket.to(gameCode).emit("YOU_WIN", data); // send the you_win message to the other client in the game
+    } else {
+      // return some error message here -- this should never happen
+    }
+  });
 });
 
 server.listen(9000, () => console.log("server is listening on port 9000"));

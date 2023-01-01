@@ -2,15 +2,6 @@ import { Socket } from "socket.io-client";
 import { Color } from "../components/game/Game";
 import PieceType from "../piece_types/pieceTypes";
 
-export enum MessageType {
-  MOVE_PIECE = "MOVE_PIECE",
-  CHECKMATE_LOST = "CHECKMATE_LOST",
-  CHECKMATE_WON = "CHECKMATE_WON",
-  // specifying that the two above are specifically for checkmates in case I
-  // decide to build a timer -> then there would be separate message types for
-  // TIME_LOST and TIME_WON as well.
-}
-
 export interface Position {
   row: number;
   col: number;
@@ -31,25 +22,21 @@ export interface MovePieceMessage {
   username: string;
 }
 
-export function sendMovePieceMessage(socket: Socket, initialPosition: Position, finalPosition: Position, pieceType: PieceType, username: string) {
+export function sendMovePieceMessage(
+  socket: Socket,
+  initialPosition: Position,
+  finalPosition: Position,
+  pieceType: PieceType,
+  username: string
+) {
   const message: MovePieceMessage = {
     initialPosition: initialPosition,
     finalPosition: finalPosition,
     pieceType: pieceType,
-    username: username
+    username: username,
   };
   socket.emit("MOVE_PIECE", message);
 }
-
-export interface CheckmateLostMessage {
-  type: MessageType.CHECKMATE_LOST;
-}
-
-export interface CheckmateWonMessage {
-  type: MessageType.CHECKMATE_WON;
-}
-
-// NOTE: we might not need the message types enum
 
 export interface CreateGameMessage {
   username: string;
@@ -87,3 +74,14 @@ export interface assignColorMessage {
 }
 
 export interface startGameMessage {}
+
+export interface YouWinMessage {
+  username: string;
+  // this message is sent to the other player to tell them that they have won
+  // (NOTE: the username is of this player; not the player who has won)
+}
+
+export function sendYouWinMessage(socket: Socket, username: string) {
+  const message: YouWinMessage = { username: username };
+  socket.emit("YOU_WIN", message);
+}

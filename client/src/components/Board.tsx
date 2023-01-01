@@ -4,9 +4,17 @@ import {
   MovePieceMessage,
   Position,
   sendMovePieceMessage,
+  sendYouWinMessage,
+  YouWinMessage,
 } from "../message/message";
 import PieceType from "../piece_types/pieceTypes";
-import { Color, GameState, getPossibleMoves, player } from "./game/Game";
+import {
+  Color,
+  GameState,
+  getPossibleMoves,
+  isCheckMated,
+  player,
+} from "./game/Game";
 import { isMoveEnablingCheck } from "./game/possibleMoves";
 import Piece from "./piece/Piece";
 import "./styles/Board.css";
@@ -15,6 +23,7 @@ let isPieceSelected: boolean = false;
 let possibleMoves: Position[] = [];
 let lastSelectedPiece: PieceType = PieceType.EMPTY_SQUARE;
 let lastSelectedPosition: Position = { row: 0, col: 0 };
+let gameOver: boolean = false;
 
 export interface BoardProps {
   myColor: Color;
@@ -40,6 +49,7 @@ export default function Board({
   const [isTurn, setIsTurn] = useState<boolean>(
     myColor === Color.WHITE ? true : false
   );
+  const [gameOverText, setGameOverText] = useState<string>("");
 
   useEffect(() => {
     socket.on("MOVE_PIECE", (data: MovePieceMessage) => {
@@ -54,56 +64,75 @@ export default function Board({
         PieceType.EMPTY_SQUARE; // in case they are killing one of my pieces
       newGameState.otherPieces.pieces[newRow][newCol] = data.pieceType;
       setGameState(newGameState);
-      setIsTurn(true);
+
+      if (isCheckMated(newGameState)) {
+        gameOver = true;
+        setGameOverText("You lost: You have been checkmated!");
+        sendYouWinMessage(socket, username);
+      } else {
+        setIsTurn(true);
+      }
+
+      // setIsTurn(true);
+    });
+
+    socket.on("YOU_WIN", (data: YouWinMessage) => {
+      console.log("received a you_win message on the client-side");
+      setIsTurn(false);
+      gameOver = true;
+      setGameOverText("You won: You have checkmated your opponent!");
     });
   }, [socket]);
 
   return (
-    <table className="chessboard">
-      {rows.map((row: number) => {
-        return (
-          <tr>
-            {cols.map((col: number) => {
-              let color: string =
-                (row + col) % 2 === 0 ? "blackSquare" : "whiteSquare";
-              if (
-                colorState.myPieces.pieces[row][col] ===
-                PieceType.SELECTED_SQUARE
-              ) {
-                color += " selectedSquare";
-              } else if (
-                colorState.myPieces.pieces[row][col] ===
-                PieceType.POSSIBLE_SQUARE
-              ) {
-                color += " possibleSquare";
-              }
-              return (
-                <td
-                  className={color}
-                  onClick={() => {
-                    if (isTurn) {
-                      handleClick(
-                        row,
-                        col,
-                        gameState,
-                        setGameState,
-                        colorState,
-                        setColorState,
-                        socket,
-                        username,
-                        setIsTurn
-                      );
-                    }
-                  }}
-                >
-                  {getPieceAtSquare(row, col, myColor, otherColor, gameState)}
-                </td>
-              );
-            })}
-          </tr>
-        );
-      })}
-    </table>
+    <div>
+      {gameOver ? <h2>{gameOverText}</h2> : null}
+      <table className="chessboard">
+        {rows.map((row: number) => {
+          return (
+            <tr>
+              {cols.map((col: number) => {
+                let color: string =
+                  (row + col) % 2 === 0 ? "blackSquare" : "whiteSquare";
+                if (
+                  colorState.myPieces.pieces[row][col] ===
+                  PieceType.SELECTED_SQUARE
+                ) {
+                  color += " selectedSquare";
+                } else if (
+                  colorState.myPieces.pieces[row][col] ===
+                  PieceType.POSSIBLE_SQUARE
+                ) {
+                  color += " possibleSquare";
+                }
+                return (
+                  <td
+                    className={color}
+                    onClick={() => {
+                      if (isTurn) {
+                        handleClick(
+                          row,
+                          col,
+                          gameState,
+                          setGameState,
+                          colorState,
+                          setColorState,
+                          socket,
+                          username,
+                          setIsTurn
+                        );
+                      }
+                    }}
+                  >
+                    {getPieceAtSquare(row, col, myColor, otherColor, gameState)}
+                  </td>
+                );
+              })}
+            </tr>
+          );
+        })}
+      </table>
+    </div>
   );
 }
 
