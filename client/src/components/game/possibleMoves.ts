@@ -363,7 +363,7 @@ export function isMoveEnablingCheck(
   console.log("opponentPossibleMoves");
   console.log(opponentPossibleMoves);
 
-  const myKingPosition: Position = getMyKingPosition(gameState);
+  const myKingPosition: Position = getMyKingPosition(projectedGameState);
   return opponentPossibleMoves
     .map((position: Position) =>
       JSON.stringify({ row: 7 - position.row, col: 7 - position.col })
