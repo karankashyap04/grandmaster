@@ -39,8 +39,6 @@ io.on("connection", (socket) => {
   socket.on("JOIN_GAME", (data) => {
     console.log("server received join game message");
     const { username, opponentUsername } = data;
-    console.log("username: " + username);
-    console.log("opponentUsername: " + opponentUsername);
     if (playerToGame.has(opponentUsername)) {
       const gameCode = playerToGame.get(opponentUsername);
       socket.join(gameCode);
@@ -48,16 +46,12 @@ io.on("connection", (socket) => {
       if (playerToColor.has(opponentUsername)) {
         const opponentColor = playerToColor.get(opponentUsername);
         const color = opponentColor === "WHITE" ? "BLACK" : "WHITE";
-        console.log("color: " + color);
         addPlayerColor(username, color);
         socket.emit("ASSIGN_COLOR", { color: color });
       } else {
         // return some error message if this happens (opponent's color should be defined)
       }
       // ensure that there are now 2 players in the game and then do something to start the game
-      console.log(
-        "number of players in game: " + gameToPlayer.get(gameCode).length
-      );
       assert(gameToPlayer.get(gameCode).length === 2);
       const startGameMessage = {};
       socket.to(gameCode).emit("START_GAME", startGameMessage);
