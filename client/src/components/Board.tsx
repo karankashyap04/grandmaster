@@ -13,7 +13,6 @@ import {
   GameState,
   getPossibleMoves,
   isCheckMated,
-  player,
 } from "./game/Game";
 import { isMoveEnablingCheck } from "./game/possibleMoves";
 import Piece from "./piece/Piece";
