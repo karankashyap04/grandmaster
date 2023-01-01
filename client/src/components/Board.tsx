@@ -6,7 +6,8 @@ import {
   sendMovePieceMessage,
 } from "../message/message";
 import PieceType from "../piece_types/pieceTypes";
-import { Color, GameState, getPossibleMoves } from "./game/Game";
+import { Color, GameState, getPossibleMoves, player } from "./game/Game";
+import { isMoveEnablingCheck } from "./game/possibleMoves";
 import Piece from "./piece/Piece";
 import "./styles/Board.css";
 
@@ -129,6 +130,22 @@ function handleClick(
         { row: row, col: col },
         gameState
       );
+      console.log("before filter");
+      console.log(possibleMoves);
+
+      // filter out moves that open you up to being checked
+      possibleMoves = possibleMoves.filter(
+        (position: Position) =>
+          !isMoveEnablingCheck(
+            { row: row, col: col },
+            position,
+            pieceType,
+            gameState
+          )
+      );
+      console.log("after filter");
+      console.log(possibleMoves);
+
       possibleMoves.forEach((position: Position) => {
         newColorState.myPieces.pieces[position.row][position.col] =
           PieceType.POSSIBLE_SQUARE;

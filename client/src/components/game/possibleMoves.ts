@@ -1,5 +1,11 @@
 import { Position } from "../../message/message";
-import { GameState, isOccupiedWithMine, isOccupiedWithOther } from "./Game";
+import PieceType from "../../piece_types/pieceTypes";
+import {
+  GameState,
+  getPossibleMoves,
+  isOccupiedWithMine,
+  isOccupiedWithOther,
+} from "./Game";
 
 function getOtherPosition(square: Position): Position {
   const otherPosition: Position = {
@@ -287,4 +293,80 @@ export function getKnightPossibleMoves(
       !isOccupiedWithMine(position, gameState)
   );
   return possibleMoves;
+}
+
+function getAllPossibleOtherPlayerMoves(gameState: GameState): Position[] {
+  let flippedGameState: GameState = JSON.parse(JSON.stringify(gameState));
+  flippedGameState = {
+    myPieces: flippedGameState.otherPieces,
+    otherPieces: flippedGameState.myPieces,
+  };
+  let possibleMoves: Position[] = [];
+  for (var row: number = 0; row < 8; row++) {
+    for (var col: number = 0; col < 8; col++) {
+      const pieceType: PieceType = gameState.otherPieces.pieces[row][col];
+      if (pieceType !== PieceType.EMPTY_SQUARE) {
+        const initialPosition: Position = { row: row, col: col };
+        const moves: Position[] = getPossibleMoves(
+          pieceType,
+          initialPosition,
+          flippedGameState
+        );
+        possibleMoves = possibleMoves.concat(moves);
+      }
+    }
+  }
+  return possibleMoves;
+}
+
+function getMyKingPosition(gameState: GameState) {
+  for (var row: number = 0; row < 8; row++) {
+    for (var col: number = 0; col < 8; col++) {
+      const pieceType: PieceType = gameState.myPieces.pieces[row][col];
+      if (pieceType === PieceType.KING) {
+        const result: Position = { row: row, col: col };
+        return result;
+      }
+    }
+  }
+  // this will never happen:
+  const incorrectOutcomeResult: Position = { row: -1, col: -1 };
+  return incorrectOutcomeResult;
+}
+
+export function isMoveEnablingCheck(
+  initialPosition: Position,
+  finalPosition: Position,
+  pieceType: PieceType,
+  gameState: GameState
+): boolean {
+  console.log("initial position");
+  console.log(initialPosition);
+  console.log("final position");
+  console.log(finalPosition);
+  console.log("pieceType: " + pieceType);
+  console.log(gameState);
+
+  const projectedGameState: GameState = JSON.parse(JSON.stringify(gameState));
+  const initialRow: number = initialPosition.row;
+  const initialCol: number = initialPosition.col;
+  const finalRow: number = finalPosition.row;
+  const finalCol: number = finalPosition.col;
+  projectedGameState.myPieces.pieces[initialRow][initialCol] =
+    PieceType.EMPTY_SQUARE;
+  projectedGameState.otherPieces.pieces[7 - finalRow][7 - finalCol] =
+    PieceType.EMPTY_SQUARE;
+  projectedGameState.myPieces.pieces[finalRow][finalCol] = pieceType;
+
+  const opponentPossibleMoves: Position[] =
+    getAllPossibleOtherPlayerMoves(projectedGameState);
+  console.log("opponentPossibleMoves");
+  console.log(opponentPossibleMoves);
+
+  const myKingPosition: Position = getMyKingPosition(gameState);
+  return opponentPossibleMoves
+    .map((position: Position) =>
+      JSON.stringify({ row: 7 - position.row, col: 7 - position.col })
+    )
+    .includes(JSON.stringify(myKingPosition));
 }
