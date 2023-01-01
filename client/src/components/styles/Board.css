@@ -1,3 +1,10 @@
+.game-over-text {
+  color: red;
+  padding-top: 2%;
+  margin: 0 auto;
+  text-align: center;
+}
+
 .chessboard {
   height: 80vh;
   aspect-ratio: 1 / 1;

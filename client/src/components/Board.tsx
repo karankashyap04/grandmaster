@@ -8,12 +8,7 @@ import {
   YouWinMessage,
 } from "../message/message";
 import PieceType from "../piece_types/pieceTypes";
-import {
-  Color,
-  GameState,
-  getPossibleMoves,
-  isCheckMated,
-} from "./game/Game";
+import { Color, GameState, getPossibleMoves, isCheckMated } from "./game/Game";
 import { isMoveEnablingCheck } from "./game/possibleMoves";
 import Piece from "./piece/Piece";
 import "./styles/Board.css";
@@ -85,7 +80,7 @@ export default function Board({
 
   return (
     <div>
-      {gameOver ? <h2>{gameOverText}</h2> : null}
+      {gameOver ? <h2 className="game-over-text">{gameOverText}</h2> : null}
       <table className="chessboard">
         {rows.map((row: number) => {
           return (
