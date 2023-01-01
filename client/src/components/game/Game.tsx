@@ -78,38 +78,12 @@ export enum player {
   OTHER = "OTHER",
 }
 
-// function isMoveValid(
-//   moveMessage: MovePieceMessage,
-//   gameState: GameState
-// ): boolean {
-//   const initialRow: number = moveMessage.initialPosition.row;
-//   const initialColumn: number = moveMessage.initialPosition.col;
-//   const initialSquarePiece =
-//     gameState.myPieces.pieces[initialRow][initialColumn];
-//   const pieceType: PieceType = moveMessage.pieceType;
-//   if (initialSquarePiece !== pieceType) {
-//     return false;
-//   }
-//   if (isOccupiedWithMine(moveMessage.finalPosition, gameState)) {
-//     return false;
-//   }
-
-//   const initialPosition: Position = moveMessage.initialPosition;
-//   const finalPosition: Position = moveMessage.finalPosition;
-//   const possibleMoves: Position[] = getPossibleMoves(
-//     pieceType,
-//     initialPosition,
-//     gameState
-//   );
-//   return possibleMoves.includes(finalPosition);
-// }
-
 // TODO: Need to add something here which will check if making some move would open you up to being
 // directly checked (since these moves would no longer be considered valid)
 export function getPossibleMoves(
   pieceType: PieceType,
   initialPosition: Position,
-  gameState: GameState,
+  gameState: GameState
 ): Position[] {
   let possibleMoves: Position[] = [];
 
