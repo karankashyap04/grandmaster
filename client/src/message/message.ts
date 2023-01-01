@@ -7,14 +7,6 @@ export interface Position {
   col: number;
 }
 
-// export interface MovePieceMessage {
-//   type: MessageType.MOVE_PIECE;
-//   data: {
-//     initialPosition: Position;
-//     finalPosition: Position;
-//     pieceType: PieceType;
-//   };
-// }
 export interface MovePieceMessage {
   initialPosition: Position;
   finalPosition: Position;
