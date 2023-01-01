@@ -78,8 +78,6 @@ export enum player {
   OTHER = "OTHER",
 }
 
-// TODO: Need to add something here which will check if making some move would open you up to being
-// directly checked (since these moves would no longer be considered valid)
 export function getPossibleMoves(
   pieceType: PieceType,
   initialPosition: Position,
