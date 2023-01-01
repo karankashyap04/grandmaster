@@ -130,8 +130,6 @@ function handleClick(
         { row: row, col: col },
         gameState
       );
-      console.log("before filter");
-      console.log(possibleMoves);
 
       // filter out moves that open you up to being checked
       possibleMoves = possibleMoves.filter(
@@ -143,8 +141,6 @@ function handleClick(
             gameState
           )
       );
-      console.log("after filter");
-      console.log(possibleMoves);
 
       possibleMoves.forEach((position: Position) => {
         newColorState.myPieces.pieces[position.row][position.col] =

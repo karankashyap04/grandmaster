@@ -340,13 +340,6 @@ export function isMoveEnablingCheck(
   pieceType: PieceType,
   gameState: GameState
 ): boolean {
-  console.log("initial position");
-  console.log(initialPosition);
-  console.log("final position");
-  console.log(finalPosition);
-  console.log("pieceType: " + pieceType);
-  console.log(gameState);
-
   const projectedGameState: GameState = JSON.parse(JSON.stringify(gameState));
   const initialRow: number = initialPosition.row;
   const initialCol: number = initialPosition.col;
@@ -360,8 +353,6 @@ export function isMoveEnablingCheck(
 
   const opponentPossibleMoves: Position[] =
     getAllPossibleOtherPlayerMoves(projectedGameState);
-  console.log("opponentPossibleMoves");
-  console.log(opponentPossibleMoves);
 
   const myKingPosition: Position = getMyKingPosition(projectedGameState);
   return opponentPossibleMoves
