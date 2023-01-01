@@ -120,8 +120,9 @@ export function getPossibleMoves(
   return possibleMoves;
 }
 
-function isChecked(gameState: GameState): boolean {
+export function isChecked(gameState: GameState): boolean {
   // determines whether or not you are currently under check
+  console.log("isChecked");
   const myKingPosition: Position = getMyKingPosition(gameState);
   const opponentPossibleMoves: Position[] =
     getAllPossibleOtherPlayerMoves(gameState);

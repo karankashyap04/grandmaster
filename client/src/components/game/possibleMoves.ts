@@ -1,8 +1,15 @@
 import { Position } from "../../message/message";
 import PieceType from "../../piece_types/pieceTypes";
 import {
+  kingMoved,
+  leftRookMoved,
+  rightRookMoved,
+  swapKingMoved,
+} from "../Board";
+import {
   GameState,
   getPossibleMoves,
+  isChecked,
   isOccupiedWithMine,
   isOccupiedWithOther,
 } from "./Game";
@@ -139,12 +146,16 @@ export function getKingPossibleMoves(
 ): Position[] {
   let possibleMoves: Position[] = [];
   // front positions
-  for (var i = -1; i <= 1; i++) {
-    const position: Position = {
-      row: initialPosition.row + 1,
-      col: initialPosition.col + i,
-    };
-    possibleMoves.push(position);
+  if (initialPosition.row < 7) {
+    for (var i = -1; i <= 1; i++) {
+      const position: Position = {
+        row: initialPosition.row + 1,
+        col: initialPosition.col + i,
+      };
+      if (position.col >= 0 && position.col <= 7) {
+        possibleMoves.push(position);
+      }
+    }
   }
   // left and right
   for (var j = -1; j <= 1; j += 2) {
@@ -152,16 +163,96 @@ export function getKingPossibleMoves(
       row: initialPosition.row,
       col: initialPosition.col + j,
     };
-    possibleMoves.push(position);
+    if (position.col >= 0 && position.col <= 7) {
+      possibleMoves.push(position);
+    }
   }
   // behind positions
-  for (var k = -1; k <= 1; k++) {
-    const position: Position = {
-      row: initialPosition.row - 1,
-      col: initialPosition.col + k,
-    };
-    possibleMoves.push(position);
+  if (initialPosition.row > 0) {
+    for (var k = -1; k <= 1; k++) {
+      const position: Position = {
+        row: initialPosition.row - 1,
+        col: initialPosition.col + k,
+      };
+      if (position.col >= 0 && position.col <= 7) {
+        possibleMoves.push(position);
+      }
+    }
   }
+
+  // castle positions
+  if (!kingMoved) {
+    swapKingMoved();
+    if (!isChecked(gameState)) {
+      swapKingMoved();
+      const col: number = initialPosition.col;
+      if (!leftRookMoved) {
+        if (
+          gameState.myPieces.pieces[0][col - 1] === PieceType.EMPTY_SQUARE &&
+          gameState.otherPieces.pieces[7][7 - (col - 1)] ===
+            PieceType.EMPTY_SQUARE &&
+          gameState.myPieces.pieces[0][col - 2] === PieceType.EMPTY_SQUARE &&
+          gameState.otherPieces.pieces[7][7 - (col - 2)] ===
+            PieceType.EMPTY_SQUARE &&
+          (col - 3 === 0 ||
+            (gameState.myPieces.pieces[0][col - 3] === PieceType.EMPTY_SQUARE &&
+              gameState.otherPieces.pieces[7][7 - (col - 3)] ===
+                PieceType.EMPTY_SQUARE))
+        ) {
+          const intermediateGameState: GameState = JSON.parse(
+            JSON.stringify(gameState)
+          );
+          intermediateGameState.myPieces.pieces[0][col] =
+            PieceType.EMPTY_SQUARE;
+          intermediateGameState.myPieces.pieces[0][col - 1] = PieceType.KING;
+          if (!isChecked(intermediateGameState)) {
+            intermediateGameState.myPieces.pieces[0][col - 1] = PieceType.ROOK;
+            intermediateGameState.myPieces.pieces[0][col - 2] = PieceType.KING;
+            intermediateGameState.myPieces.pieces[0][col - 3] =
+              PieceType.EMPTY_SQUARE;
+            if (!isChecked(intermediateGameState)) {
+              const castlePosition: Position = { row: 0, col: col - 2 };
+              possibleMoves.push(castlePosition);
+            }
+          }
+        }
+      }
+      if (!rightRookMoved) {
+        if (
+          gameState.myPieces.pieces[0][col + 1] === PieceType.EMPTY_SQUARE &&
+          gameState.otherPieces.pieces[7][7 - (col + 1)] ===
+            PieceType.EMPTY_SQUARE &&
+          gameState.myPieces.pieces[0][col + 2] === PieceType.EMPTY_SQUARE &&
+          gameState.otherPieces.pieces[7][7 - (col + 2)] ===
+            PieceType.EMPTY_SQUARE &&
+          (col + 3 === 7 ||
+            (gameState.myPieces.pieces[0][col + 3] === PieceType.EMPTY_SQUARE &&
+              gameState.otherPieces.pieces[7][7 - (col + 3)] ===
+                PieceType.EMPTY_SQUARE))
+        ) {
+          const intermediateGameState: GameState = JSON.parse(
+            JSON.stringify(gameState)
+          );
+          intermediateGameState.myPieces.pieces[0][col] =
+            PieceType.EMPTY_SQUARE;
+          intermediateGameState.myPieces.pieces[0][col + 1] = PieceType.KING;
+          if (!isChecked(intermediateGameState)) {
+            intermediateGameState.myPieces.pieces[0][col + 1] = PieceType.ROOK;
+            intermediateGameState.myPieces.pieces[0][col + 2] = PieceType.KING;
+            intermediateGameState.myPieces.pieces[0][col + 3] =
+              PieceType.EMPTY_SQUARE;
+            if (!isChecked(intermediateGameState)) {
+              const castlePosition: Position = { row: 0, col: col + 2 };
+              possibleMoves.push(castlePosition);
+            }
+          }
+        }
+      }
+    } else {
+      swapKingMoved();
+    }
+  }
+
   possibleMoves = possibleMoves.filter(
     (position: Position) => !isOccupiedWithMine(position, gameState)
   );

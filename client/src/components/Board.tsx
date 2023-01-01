@@ -18,6 +18,13 @@ let possibleMoves: Position[] = [];
 let lastSelectedPiece: PieceType = PieceType.EMPTY_SQUARE;
 let lastSelectedPosition: Position = { row: 0, col: 0 };
 let gameOver: boolean = false;
+export let leftRookMoved: boolean = false;
+export let rightRookMoved: boolean = false;
+export let kingMoved: boolean = false;
+
+export function swapKingMoved() {
+  kingMoved = !kingMoved;
+}
 
 export interface BoardProps {
   myColor: Color;
@@ -179,22 +186,85 @@ function handleClick(
     (position: Position) => JSON.stringify(position)
   );
   if (possibleMoveStrings.includes(JSON.stringify(clickedPosition))) {
-    gameState.otherPieces.pieces[7 - row][7 - col] = PieceType.EMPTY_SQUARE; // in case one of the other player's pieces is killed
-    gameState.myPieces.pieces[row][col] = lastSelectedPiece;
-    const oldRow = lastSelectedPosition.row;
-    const oldCol = lastSelectedPosition.col;
-    gameState.myPieces.pieces[oldRow][oldCol] = PieceType.EMPTY_SQUARE;
-    setGameState(gameState);
-    setColorState(JSON.parse(JSON.stringify(gameState)));
-    isPieceSelected = false;
-    sendMovePieceMessage(
-      socket,
-      lastSelectedPosition,
-      clickedPosition,
-      lastSelectedPiece,
-      username
-    );
-    setIsTurn(false);
+    if (lastSelectedPiece === PieceType.KING && !kingMoved) {
+      const kingCol: number = lastSelectedPosition.col;
+      if (col - kingCol === 2 && !rightRookMoved) {
+        gameState.myPieces.pieces[0][kingCol] = PieceType.EMPTY_SQUARE;
+        gameState.myPieces.pieces[0][col] = PieceType.KING;
+        gameState.myPieces.pieces[0][7] = PieceType.EMPTY_SQUARE;
+        gameState.myPieces.pieces[0][col - 1] = PieceType.ROOK;
+        rightRookMoved = true;
+        kingMoved = true;
+        setGameState(gameState);
+        setColorState(JSON.parse(JSON.stringify(gameState)));
+        isPieceSelected = false;
+        setIsTurn(false);
+        sendMovePieceMessage(
+          socket,
+          lastSelectedPosition,
+          clickedPosition,
+          lastSelectedPiece,
+          username
+        );
+        sendMovePieceMessage(
+          socket,
+          { row: 0, col: 7 },
+          { row: 0, col: col - 1 },
+          PieceType.ROOK,
+          username
+        );
+      } else if (kingCol - col === 2 && !leftRookMoved) {
+        gameState.myPieces.pieces[0][kingCol] = PieceType.EMPTY_SQUARE;
+        gameState.myPieces.pieces[0][col] = PieceType.KING;
+        gameState.myPieces.pieces[0][col + 1] = PieceType.ROOK;
+        gameState.myPieces.pieces[0][0] = PieceType.EMPTY_SQUARE;
+        leftRookMoved = true;
+        kingMoved = true;
+        setGameState(gameState);
+        setColorState(JSON.parse(JSON.stringify(gameState)));
+        isPieceSelected = false;
+        setIsTurn(false);
+        sendMovePieceMessage(
+          socket,
+          lastSelectedPosition,
+          clickedPosition,
+          lastSelectedPiece,
+          username
+        );
+        sendMovePieceMessage(
+          socket,
+          { row: 0, col: 0 },
+          { row: 0, col: col + 1 },
+          PieceType.ROOK,
+          username
+        );
+      }
+    } else {
+      gameState.otherPieces.pieces[7 - row][7 - col] = PieceType.EMPTY_SQUARE; // in case one of the other player's pieces is killed
+      gameState.myPieces.pieces[row][col] = lastSelectedPiece;
+      const oldRow = lastSelectedPosition.row;
+      const oldCol = lastSelectedPosition.col;
+      gameState.myPieces.pieces[oldRow][oldCol] = PieceType.EMPTY_SQUARE;
+      setGameState(gameState);
+      setColorState(JSON.parse(JSON.stringify(gameState)));
+      isPieceSelected = false;
+      if (oldRow === 0 && oldCol === 0) {
+        leftRookMoved = true;
+      } else if (oldRow === 0 && oldCol === 7) {
+        rightRookMoved = true;
+      }
+      if (lastSelectedPiece === PieceType.KING) {
+        kingMoved = true;
+      }
+      sendMovePieceMessage(
+        socket,
+        lastSelectedPosition,
+        clickedPosition,
+        lastSelectedPiece,
+        username
+      );
+      setIsTurn(false);
+    }
   } else if (pieceType === PieceType.EMPTY_SQUARE) {
     isPieceSelected = false;
     setColorState(JSON.parse(JSON.stringify(gameState)));
