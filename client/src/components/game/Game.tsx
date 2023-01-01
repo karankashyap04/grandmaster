@@ -1,6 +1,6 @@
 import React, { useState } from "react";
 import { Socket } from "socket.io-client";
-import { MovePieceMessage, Position } from "../../message/message";
+import { Position } from "../../message/message";
 import PieceType from "../../piece_types/pieceTypes";
 import Board from "../Board";
 import { getInitialPiecePositions } from "./initialGameState";
