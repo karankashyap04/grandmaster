@@ -147,7 +147,7 @@ export function getKingPossibleMoves(
     possibleMoves.push(position);
   }
   // left and right
-  for (var j = -1; i <= 1; i += 2) {
+  for (var j = -1; j <= 1; j += 2) {
     const position: Position = {
       row: initialPosition.row,
       col: initialPosition.col + j,
@@ -295,7 +295,9 @@ export function getKnightPossibleMoves(
   return possibleMoves;
 }
 
-export function getAllPossibleOtherPlayerMoves(gameState: GameState): Position[] {
+export function getAllPossibleOtherPlayerMoves(
+  gameState: GameState
+): Position[] {
   let flippedGameState: GameState = JSON.parse(JSON.stringify(gameState));
   flippedGameState = {
     myPieces: flippedGameState.otherPieces,
