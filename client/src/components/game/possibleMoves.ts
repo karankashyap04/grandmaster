@@ -155,7 +155,7 @@ export function getKingPossibleMoves(
     possibleMoves.push(position);
   }
   // behind positions
-  for (var k = -1; i <= 1; i++) {
+  for (var k = -1; k <= 1; k++) {
     const position: Position = {
       row: initialPosition.row - 1,
       col: initialPosition.col + k,
@@ -164,10 +164,10 @@ export function getKingPossibleMoves(
   }
   possibleMoves = possibleMoves.filter(
     (position: Position) =>
-      !(
-        isOccupiedWithOther(getOtherPosition(position), gameState) ||
-        isOccupiedWithMine(position, gameState)
-      )
+      // !(
+      // isOccupiedWithOther(getOtherPosition(position), gameState) ||
+      !isOccupiedWithMine(position, gameState)
+    // )
   );
   return possibleMoves;
 }
