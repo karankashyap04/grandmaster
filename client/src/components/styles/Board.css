@@ -6,22 +6,26 @@
 }
 
 .chessboard {
-  height: 80vh;
+  height: 88vh;
   aspect-ratio: 1 / 1;
   margin: 2% auto;
   border-collapse: collapse;
 }
 
+td {
+  display: inline-block;
+}
+
 .whiteSquare {
-  height: 10vh;
-  width: 10vw;
+  height: 11vh;
+  width: 11vh;
   background-color: blanchedalmond;
   text-align: center;
 }
 
 .blackSquare {
-  height: 10vh;
-  width: 10vw;
+  height: 11vh;
+  width: 11vh;
   background-color: rgb(105, 55, 21);
   text-align: center;
 }
