@@ -1,5 +1,7 @@
 .piece {
-  height: 7vh;
+  height: 8vh;
+  position: relative;
+  top: 1.25vh;
 }
 
 .piece:hover {
