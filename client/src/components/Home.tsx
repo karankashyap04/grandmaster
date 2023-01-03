@@ -120,12 +120,6 @@ export default function Home({
           </div>
           <div className="col-6">
             <h3>Join an existing game</h3>
-            {/* <ControlledInput
-              value={opponent}
-              setValue={setOpponent}
-              placeholder={"Opponent's username:"}
-              className="opponent-name-input"
-            /> */}
             <div className="selected-opponent-text">Selected Opponent: <span className="selected-opponent">{opponent}</span></div>
             <OpponentPicker
               availableOpponents={availableOpponents}
