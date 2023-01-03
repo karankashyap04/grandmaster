@@ -11,6 +11,10 @@
   margin: 2%;
 }
 
+.error-text {
+  color: red;
+}
+
 .color-pick {
   margin: 2% 0;
   padding: 0 30%;

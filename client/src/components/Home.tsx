@@ -46,12 +46,17 @@ export default function Home({
   username,
   setUsername,
 }: HomeProps) {
+  const [errorText, setErrorText] = useState<string>("");
   const [opponent, setOpponent] = useState<string>("");
   const [availableOpponents, setAvailableOpponents] = useState<string[]>([]);
 
   useEffect(() => {
     socket.on("AVAILABLE_OPPONENTS", (data: availableOpponentsMessage) => {
       setAvailableOpponents(data.availableOpponents);
+    });
+
+    socket.on("USERNAME_TAKEN", (data) => {
+      setErrorText("This username has already been taken by another player!");
     });
   }, [socket]);
 
@@ -65,6 +70,7 @@ export default function Home({
           placeholder={"Enter username:"}
           className="username-input"
         />
+        <div className="error-text">{errorText}</div>
         <div className="row">
           <div className="col-6">
             <h3>Create a new game</h3>
@@ -112,7 +118,12 @@ export default function Home({
             <button
               className="btn btn-outline-dark"
               onClick={() => {
-                sendCreateGameMessage(socket, username, color);
+                if (username.trim() === "") {
+                  setErrorText("Enter a non-empty username!");
+                } else {
+                  setErrorText("");
+                  sendCreateGameMessage(socket, username, color);
+                }
               }}
             >
               Create a New Game
@@ -120,7 +131,10 @@ export default function Home({
           </div>
           <div className="col-6">
             <h3>Join an existing game</h3>
-            <div className="selected-opponent-text">Selected Opponent: <span className="selected-opponent">{opponent}</span></div>
+            <div className="selected-opponent-text">
+              Selected Opponent:{" "}
+              <span className="selected-opponent">{opponent}</span>
+            </div>
             <OpponentPicker
               availableOpponents={availableOpponents}
               setOpponent={setOpponent}
@@ -128,7 +142,12 @@ export default function Home({
             <button
               className="btn btn-outline-dark"
               onClick={() => {
-                sendJoinGameMessage(socket, username, opponent);
+                if (username.trim() === "") {
+                  setErrorText("Enter a non-empty username!");
+                } else {
+                  setErrorText("");
+                  sendJoinGameMessage(socket, username, opponent);
+                }
               }}
             >
               Play against a chosen opponent

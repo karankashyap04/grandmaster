@@ -38,20 +38,27 @@ io.on("connection", (socket) => {
   socket.on("CREATE_GAME", (data) => {
     console.log("server received create game message");
     const { username, color } = data;
-    const gameCode = generateGameCode();
-    socket.join(gameCode);
-    addPlayerToGame(username, gameCode);
-    addPlayerColor(username, color);
-    addFreePlayer(username);
-    socket.broadcast.emit("AVAILABLE_OPPONENTS", {
-      availableOpponents: getAllFreePlayers(),
-    });
+    if (playerToGame.has(username)) {
+      socket.emit("USERNAME_TAKEN", {});
+    } else {
+      const gameCode = generateGameCode();
+      socket.join(gameCode);
+      addPlayerToGame(username, gameCode);
+      addPlayerColor(username, color);
+      addFreePlayer(username);
+      socket.broadcast.emit("AVAILABLE_OPPONENTS", {
+        availableOpponents: getAllFreePlayers(),
+      });
+    }
   });
 
   socket.on("JOIN_GAME", (data) => {
     console.log("server received join game message");
     const { username, opponentUsername } = data;
-    if (playerToGame.has(opponentUsername)) {
+    if (playerToGame.has(username)) {
+      // need to tell the client to pick a different username
+      socket.emit("USERNAME_TAKEN", {});
+    } else if (playerToGame.has(opponentUsername)) {
       const gameCode = playerToGame.get(opponentUsername);
       removeFreePlayer(opponentUsername);
       socket.join(gameCode);
