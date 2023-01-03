@@ -34,6 +34,7 @@ export interface BoardProps {
   setGameState: Dispatch<SetStateAction<GameState>>;
   socket: Socket;
   username: string;
+  setUsername: Dispatch<SetStateAction<string>>;
 }
 
 export default function Board({
@@ -42,6 +43,7 @@ export default function Board({
   setGameState,
   socket,
   username,
+  setUsername,
 }: BoardProps) {
   const otherColor: Color = myColor === Color.WHITE ? Color.BLACK : Color.WHITE;
   let rows: number[] = [7, 6, 5, 4, 3, 2, 1, 0];
@@ -83,6 +85,7 @@ export default function Board({
       setIsTurn(false);
       gameOver = true;
       setGameOverText("You won: You have checkmated your opponent!");
+      setUsername("");
     });
   }, [socket]);
 

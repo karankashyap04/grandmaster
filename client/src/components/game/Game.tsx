@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import React, { useState, Dispatch, SetStateAction } from "react";
 import { Socket } from "socket.io-client";
 import { Position } from "../../message/message";
 import PieceType from "../../piece_types/pieceTypes";
@@ -36,9 +36,10 @@ interface GameProps {
   myColor: Color;
   socket: Socket;
   username: string;
+  setUsername: Dispatch<SetStateAction<string>>;
 }
 
-export default function Game({ myColor, socket, username }: GameProps) {
+export default function Game({ myColor, socket, username, setUsername }: GameProps) {
   const otherColor: Color = myColor === Color.WHITE ? Color.BLACK : Color.WHITE;
   const [gameState, setGameState] = useState<GameState>({
     myPieces: { pieces: getInitialPiecePositions(myColor) },
@@ -52,6 +53,7 @@ export default function Game({ myColor, socket, username }: GameProps) {
         setGameState={setGameState}
         socket={socket}
         username={username}
+        setUsername={setUsername}
       />
     </div>
   );

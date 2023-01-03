@@ -29,6 +29,8 @@ const io = new Server(server, {
   },
 });
 
+const playerToSocket = new Map();
+
 io.on("connection", (socket) => {
   console.log(`A new user has connected. Socket id: ${socket.id}`);
   socket.emit("AVAILABLE_OPPONENTS", {
@@ -49,6 +51,7 @@ io.on("connection", (socket) => {
       socket.broadcast.emit("AVAILABLE_OPPONENTS", {
         availableOpponents: getAllFreePlayers(),
       });
+      playerToSocket.set(username, socket);
     }
   });
 
@@ -79,6 +82,7 @@ io.on("connection", (socket) => {
       socket.broadcast.emit("AVAILABLE_OPPONENTS", {
         availableOpponents: getAllFreePlayers(),
       });
+      playerToSocket.set(username, socket);
     }
     // return some error message if this happens (no valid opponent)
   });
@@ -99,10 +103,36 @@ io.on("connection", (socket) => {
     if (playerToGame.has(username)) {
       const gameCode = playerToGame.get(username);
       socket.to(gameCode).emit("YOU_WIN", data); // send the you_win message to the other client in the game
+      removePlayersFromServer(socket, username, gameCode);
     } else {
       // return some error message here -- this should never happen
     }
   });
 });
+
+function removePlayersFromServer(socket, username, gameCode) {
+  socket.leave(gameCode);
+  gameToPlayer
+    .get(gameCode)
+    .splice(gameToPlayer.get(gameCode).indexOf(username), 1);
+  const opponentUsername = gameToPlayer.get(gameCode)[0];
+  const otherSocket = playerToSocket.get(opponentUsername);
+  otherSocket.leave(gameCode);
+  gameToPlayer.delete(gameCode);
+  playerToSocket.delete(username);
+  playerToSocket.delete(opponentUsername);
+  playerToColor.delete(username);
+  playerToColor.delete(opponentUsername);
+  playerToGame.delete(username);
+  playerToGame.delete(opponentUsername);
+  console.log("playerToGame");
+  console.log(playerToGame);
+  console.log("playerToColor");
+  console.log(playerToColor);
+  console.log("gameToPlayer");
+  console.log(gameToPlayer);
+  console.log("playerToSocket");
+  console.log(playerToSocket);
+}
 
 server.listen(9000, () => console.log("server is listening on port 9000"));

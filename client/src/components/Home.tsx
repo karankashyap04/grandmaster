@@ -121,7 +121,9 @@ export default function Home({
                 if (username.trim() === "") {
                   setErrorText("Enter a non-empty username!");
                 } else {
-                  setErrorText("");
+                  setErrorText(
+                    "Waiting for another player to join your game..."
+                  );
                   sendCreateGameMessage(socket, username, color);
                 }
               }}
@@ -138,19 +140,24 @@ export default function Home({
             <OpponentPicker
               availableOpponents={availableOpponents}
               setOpponent={setOpponent}
+              username={username}
             />
             <button
               className="btn btn-outline-dark"
               onClick={() => {
                 if (username.trim() === "") {
                   setErrorText("Enter a non-empty username!");
+                } else if (opponent.trim() === "") {
+                  setErrorText(
+                    "You must select an opponent if you want to join a game they have started!"
+                  );
                 } else {
                   setErrorText("");
                   sendJoinGameMessage(socket, username, opponent);
                 }
               }}
             >
-              Play against a chosen opponent
+              Play against the chosen opponent
             </button>
           </div>
         </div>
@@ -162,11 +169,13 @@ export default function Home({
 interface OpponentPickerProps {
   availableOpponents: string[];
   setOpponent: Dispatch<SetStateAction<string>>;
+  username: string;
 }
 
 function OpponentPicker({
   availableOpponents,
   setOpponent,
+  username,
 }: OpponentPickerProps) {
   if (availableOpponents.length === 0) {
     return (
@@ -181,7 +190,7 @@ function OpponentPicker({
       <h4>Available opponents:</h4>
       <div className="list-group opponent-list">
         {availableOpponents.map((opponent: string) => {
-          return (
+          return opponent === username ? null : (
             <div
               className="list-group-item list-group-item-action available-opponent"
               onClick={() => {

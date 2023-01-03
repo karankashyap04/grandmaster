@@ -26,7 +26,12 @@ function App() {
   return (
     <div>
       {isGameStarted ? (
-        <Game myColor={color} socket={socket} username={username} />
+        <Game
+          myColor={color}
+          socket={socket}
+          username={username}
+          setUsername={setUsername}
+        />
       ) : (
         <Home
           socket={socket}
