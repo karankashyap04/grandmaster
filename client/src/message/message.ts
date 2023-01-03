@@ -67,6 +67,10 @@ export interface assignColorMessage {
 
 export interface startGameMessage {}
 
+export interface availableOpponentsMessage {
+  availableOpponents: string[];
+}
+
 export interface YouWinMessage {
   username: string;
   // this message is sent to the other player to tell them that they have won

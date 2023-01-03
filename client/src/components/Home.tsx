@@ -1,7 +1,11 @@
-import React, { useState, Dispatch, SetStateAction } from "react";
+import React, { useEffect, useState, Dispatch, SetStateAction } from "react";
 import { Color } from "./game/Game";
 import { Socket } from "socket.io-client";
-import { sendCreateGameMessage, sendJoinGameMessage } from "../message/message";
+import {
+  availableOpponentsMessage,
+  sendCreateGameMessage,
+  sendJoinGameMessage,
+} from "../message/message";
 import "./styles/Home.css";
 
 interface ControlledInputProps {
@@ -35,8 +39,22 @@ interface HomeProps {
   setUsername: Dispatch<SetStateAction<string>>;
 }
 
-export default function Home({ socket, color, setColor, username, setUsername }: HomeProps) {
+export default function Home({
+  socket,
+  color,
+  setColor,
+  username,
+  setUsername,
+}: HomeProps) {
   const [opponent, setOpponent] = useState<string>("");
+  const [availableOpponents, setAvailableOpponents] = useState<string[]>([]);
+
+  useEffect(() => {
+    socket.on("AVAILABLE_OPPONENTS", (data: availableOpponentsMessage) => {
+      setAvailableOpponents(data.availableOpponents);
+    });
+  }, [socket]);
+
   return (
     <div className="home-container">
       <h1 className="title">Grandmaster</h1>
@@ -102,13 +120,17 @@ export default function Home({ socket, color, setColor, username, setUsername }:
           </div>
           <div className="col-6">
             <h3>Join an existing game</h3>
-            <ControlledInput
+            {/* <ControlledInput
               value={opponent}
               setValue={setOpponent}
               placeholder={"Opponent's username:"}
               className="opponent-name-input"
+            /> */}
+            <div className="selected-opponent-text">Selected Opponent: <span className="selected-opponent">{opponent}</span></div>
+            <OpponentPicker
+              availableOpponents={availableOpponents}
+              setOpponent={setOpponent}
             />
-            <p>Note: The opponent must have started a game already</p>
             <button
               className="btn btn-outline-dark"
               onClick={() => {
@@ -119,6 +141,44 @@ export default function Home({ socket, color, setColor, username, setUsername }:
             </button>
           </div>
         </div>
+      </div>
+    </div>
+  );
+}
+
+interface OpponentPickerProps {
+  availableOpponents: string[];
+  setOpponent: Dispatch<SetStateAction<string>>;
+}
+
+function OpponentPicker({
+  availableOpponents,
+  setOpponent,
+}: OpponentPickerProps) {
+  if (availableOpponents.length === 0) {
+    return (
+      <div>
+        <h4>Available opponents:</h4>
+        <p>Unfortunately no opponents are currently available!</p>
+      </div>
+    );
+  }
+  return (
+    <div className="container">
+      <h4>Available opponents:</h4>
+      <div className="list-group opponent-list">
+        {availableOpponents.map((opponent: string) => {
+          return (
+            <div
+              className="list-group-item list-group-item-action available-opponent"
+              onClick={() => {
+                setOpponent(opponent);
+              }}
+            >
+              {opponent}
+            </div>
+          );
+        })}
       </div>
     </div>
   );

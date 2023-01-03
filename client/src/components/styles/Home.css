@@ -24,7 +24,25 @@
   text-align: left;
 }
 
-.opponent-name-input {
+/* .opponent-name-input {
   width: 15vw;
   margin: 2%;
+} */
+
+.selected-opponent-text {
+  font-size: 1.2rem;
+  margin: 1%;
+  margin-bottom: 4%;
+}
+
+.selected-opponent {
+  color: blue;
+}
+
+.opponent-list {
+  padding: 2% 20%;
+}
+
+.available-opponent {
+  cursor: pointer;
 }

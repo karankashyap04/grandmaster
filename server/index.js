@@ -10,6 +10,11 @@ const {
   generateGameCode,
 } = require("./game/game");
 const { playerToColor, addPlayerColor } = require("./color");
+const {
+  addFreePlayer,
+  removeFreePlayer,
+  getAllFreePlayers,
+} = require("./opponents/availableOpponents");
 const assert = require("assert");
 
 const app = express();
@@ -26,6 +31,9 @@ const io = new Server(server, {
 
 io.on("connection", (socket) => {
   console.log(`A new user has connected. Socket id: ${socket.id}`);
+  socket.emit("AVAILABLE_OPPONENTS", {
+    availableOpponents: getAllFreePlayers(),
+  });
 
   socket.on("CREATE_GAME", (data) => {
     console.log("server received create game message");
@@ -34,6 +42,10 @@ io.on("connection", (socket) => {
     socket.join(gameCode);
     addPlayerToGame(username, gameCode);
     addPlayerColor(username, color);
+    addFreePlayer(username);
+    socket.broadcast.emit("AVAILABLE_OPPONENTS", {
+      availableOpponents: getAllFreePlayers(),
+    });
   });
 
   socket.on("JOIN_GAME", (data) => {
@@ -41,6 +53,7 @@ io.on("connection", (socket) => {
     const { username, opponentUsername } = data;
     if (playerToGame.has(opponentUsername)) {
       const gameCode = playerToGame.get(opponentUsername);
+      removeFreePlayer(opponentUsername);
       socket.join(gameCode);
       addPlayerToGame(username, gameCode);
       if (playerToColor.has(opponentUsername)) {
@@ -56,6 +69,9 @@ io.on("connection", (socket) => {
       const startGameMessage = {};
       socket.to(gameCode).emit("START_GAME", startGameMessage);
       socket.emit("START_GAME", startGameMessage);
+      socket.broadcast.emit("AVAILABLE_OPPONENTS", {
+        availableOpponents: getAllFreePlayers(),
+      });
     }
     // return some error message if this happens (no valid opponent)
   });
