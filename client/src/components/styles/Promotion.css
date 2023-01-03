@@ -1,0 +1,9 @@
+.promotion-container {
+  background-color: rgb(105, 55, 21);
+  opacity: 0.7;
+}
+
+.piece-holder {
+  padding: 1%;
+  background-color: blanchedalmond;
+}

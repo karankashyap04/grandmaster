@@ -11,12 +11,14 @@ import PieceType from "../piece_types/pieceTypes";
 import { Color, GameState, getPossibleMoves, isCheckMated } from "./game/Game";
 import { isMoveEnablingCheck } from "./game/possibleMoves";
 import Piece from "./piece/Piece";
+import Promotion from "./Promotion";
 import "./styles/Board.css";
 
 let isPieceSelected: boolean = false;
 let possibleMoves: Position[] = [];
-let lastSelectedPiece: PieceType = PieceType.EMPTY_SQUARE;
-let lastSelectedPosition: Position = { row: 0, col: 0 };
+export let lastSelectedPiece: PieceType = PieceType.EMPTY_SQUARE;
+export let lastSelectedPosition: Position = { row: 0, col: 0 };
+export let clickedPosition: Position = { row: 0, col: 0 };
 let gameOver: boolean = false;
 export let leftRookMoved: boolean = false;
 export let rightRookMoved: boolean = false;
@@ -51,6 +53,7 @@ export default function Board({
     myColor === Color.WHITE ? true : false
   );
   const [gameOverText, setGameOverText] = useState<string>("");
+  const [showPromotion, setShowPromotion] = useState<boolean>(false);
 
   useEffect(() => {
     socket.on("MOVE_PIECE", (data: MovePieceMessage) => {
@@ -73,8 +76,6 @@ export default function Board({
       } else {
         setIsTurn(true);
       }
-
-      // setIsTurn(true);
     });
 
     socket.on("YOU_WIN", (data: YouWinMessage) => {
@@ -88,6 +89,16 @@ export default function Board({
   return (
     <div>
       {gameOver ? <h2 className="game-over-text">{gameOverText}</h2> : null}
+      {showPromotion ? (
+        <Promotion
+          color={myColor}
+          gameState={gameState}
+          setGameState={setGameState}
+          socket={socket}
+          username={username}
+          setShowPromotion={setShowPromotion}
+        />
+      ) : null}
       <table className="chessboard">
         {rows.map((row: number) => {
           return (
@@ -120,7 +131,8 @@ export default function Board({
                           setColorState,
                           socket,
                           username,
-                          setIsTurn
+                          setIsTurn,
+                          setShowPromotion
                         );
                       }
                     }}
@@ -146,7 +158,8 @@ function handleClick(
   setColorState: Dispatch<SetStateAction<GameState>>,
   socket: Socket,
   username: string,
-  setIsTurn: Dispatch<SetStateAction<boolean>>
+  setIsTurn: Dispatch<SetStateAction<boolean>>,
+  setShowPromotion: Dispatch<SetStateAction<boolean>>
 ) {
   const pieceType: PieceType = gameState.myPieces.pieces[row][col];
   if (!isPieceSelected) {
@@ -181,7 +194,7 @@ function handleClick(
     }
     return;
   }
-  const clickedPosition: Position = { row: row, col: col };
+  clickedPosition = { row: row, col: col };
   const possibleMoveStrings: string[] = possibleMoves.map(
     (position: Position) => JSON.stringify(position)
   );
@@ -213,6 +226,7 @@ function handleClick(
           PieceType.ROOK,
           username
         );
+        return;
       } else if (kingCol - col === 2 && !leftRookMoved) {
         gameState.myPieces.pieces[0][kingCol] = PieceType.EMPTY_SQUARE;
         gameState.myPieces.pieces[0][col] = PieceType.KING;
@@ -238,12 +252,25 @@ function handleClick(
           PieceType.ROOK,
           username
         );
+        return;
       }
+    }
+    if (lastSelectedPiece === PieceType.PAWN && clickedPosition.row === 7) {
+      // pawn promotion needs to take place
+      setIsTurn(false);
+      gameState.otherPieces.pieces[7 - row][7 - col] = PieceType.EMPTY_SQUARE;
+      gameState.myPieces.pieces[row][col] = lastSelectedPiece;
+      const oldRow: number = lastSelectedPosition.row;
+      const oldCol: number = lastSelectedPosition.col;
+      gameState.myPieces.pieces[oldRow][oldCol] = PieceType.EMPTY_SQUARE;
+      setShowPromotion(true);
+      setGameState(gameState);
+      setColorState(JSON.parse(JSON.stringify(gameState)));
     } else {
       gameState.otherPieces.pieces[7 - row][7 - col] = PieceType.EMPTY_SQUARE; // in case one of the other player's pieces is killed
       gameState.myPieces.pieces[row][col] = lastSelectedPiece;
-      const oldRow = lastSelectedPosition.row;
-      const oldCol = lastSelectedPosition.col;
+      const oldRow: number = lastSelectedPosition.row;
+      const oldCol: number = lastSelectedPosition.col;
       gameState.myPieces.pieces[oldRow][oldCol] = PieceType.EMPTY_SQUARE;
       setGameState(gameState);
       setColorState(JSON.parse(JSON.stringify(gameState)));
@@ -280,7 +307,8 @@ function handleClick(
       setColorState,
       socket,
       username,
-      setIsTurn
+      setIsTurn,
+      setShowPromotion
     );
   }
 }
