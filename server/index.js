@@ -125,14 +125,6 @@ function removePlayersFromServer(socket, username, gameCode) {
   playerToColor.delete(opponentUsername);
   playerToGame.delete(username);
   playerToGame.delete(opponentUsername);
-  console.log("playerToGame");
-  console.log(playerToGame);
-  console.log("playerToColor");
-  console.log(playerToColor);
-  console.log("gameToPlayer");
-  console.log(gameToPlayer);
-  console.log("playerToSocket");
-  console.log(playerToSocket);
 }
 
 server.listen(9000, () => console.log("server is listening on port 9000"));
